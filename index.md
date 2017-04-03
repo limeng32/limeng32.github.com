@@ -6,7 +6,7 @@ layout: default
   <div class="index-wrapper">
     <div class="aside">
       <div class="info-card">
-        <h2>mybatis.flying</h2>
+        <h1>my bat is flying</h1>
         <a href="https://github.com/limeng32/mybatis.flying/" target="_blank"><img src="https://github.com/favicon.ico" alt="" width="25"/></a>
         <a href="https://www.zhihu.com/people/li-meng-48/" target="_blank"><img src="https://www.zhihu.com/favicon.ico" alt="" width="22"/></a>
         <a href="http://instagram.com/beiyuu/" target="_blank"><img src="http://d36xtkk24g8jdx.cloudfront.net/bluebar/00c6602/images/ico/favicon.ico" alt="" width="22"/></a>
