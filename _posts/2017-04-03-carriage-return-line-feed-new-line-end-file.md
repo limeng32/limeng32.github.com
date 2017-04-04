@@ -28,7 +28,7 @@ category: blog
     <dependency>
         <groupId>indi.mybatis</groupId>
         <artifactId>mybatis.flying</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.0</version>
         <exclusions>
             <exclusion>
                 <groupId>org.mybatis</groupId>
