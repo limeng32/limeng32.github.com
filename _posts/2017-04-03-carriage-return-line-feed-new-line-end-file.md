@@ -17,8 +17,25 @@ category: blog
         <id>dpm-Release</id>
         <url>http://vpn.dpm.im:8081/nexus/content/repositories/releases/</url>
     </repository>
+    
+之后在POM文件中加入依赖：
 
+    <groupId>indi.mybatis</groupId>
+    <artifactId>mybatis.flying</artifactId>
+    
+即可以使用。当前最新版本为0.7.0。flying默认依赖Mybatis-3.2.5版本，如果您对实际项目中的Mybatis版本有特别需求（但建议使用Mybatis-3系列之下版本）或您使用的是个人定制版的Mybatis，您可以在依赖配置中加入exclusions，就像下面这样：
 
+    <dependency>
+        <groupId>indi.mybatis</groupId>
+        <artifactId>mybatis.flying</artifactId>
+        <version>0.7.0</version>
+        <exclusions>
+            <exclusion>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
 
 > 在计算机还没有出现之前，有一种叫做电传打字机（Teletype Model 33）的玩意，每秒钟可以打10个字符。但是它有一个问题，就是打完一行换行的时候，要用去0.2秒，正好可以打两个字符。要是在这0.2秒里面，又有新的字符传过来，那么这个字符将丢失。
 
