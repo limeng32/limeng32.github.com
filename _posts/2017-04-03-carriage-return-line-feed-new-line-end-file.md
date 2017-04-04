@@ -9,6 +9,17 @@ category: blog
 
 众所周知，Mybatis在设计之初是作为一个工作于单线程之下的中间件而存在，虽然它易于上手，但放到互联网环境下使用时，初学者不可避免的要面对诸如“一级缓存存在脏数据”、“需要写大量明文SQL语句”等问题。这些是用户最关心的“是否可用”级别问题，也是Mybatis-3系列版本中开发团队并没有完全解决的问题，或者说，相对于另一个竞争产品Hibernate，Mybatis的开发团队选择了一种更“谦逊”的方式，他们开放Mybatis接口，允许用户开发插件，按自己的方式来解决这些问题。于是，一切ORM领域相关的问题在Mybatis上通过插件都有了解决方案。而本文所要介绍的mybatis.flying，则集成了用户最需要的几个功能，同时提出一种新的调用数据方式，希望能起到抛砖引玉的作用。
 
+## 如何获取mybatis.flying
+
+因为目前mybatis.flying还不在maven中心库内（尚在apache上申请中），所以若要使用需要先在maven全局配置文件或POM文件中加入以下仓库： 
+
+    <repository>
+        <id>dpm-Release</id>
+        <url>http://vpn.dpm.im:8081/nexus/content/repositories/releases/</url>
+    </repository>
+
+
+
 > 在计算机还没有出现之前，有一种叫做电传打字机（Teletype Model 33）的玩意，每秒钟可以打10个字符。但是它有一个问题，就是打完一行换行的时候，要用去0.2秒，正好可以打两个字符。要是在这0.2秒里面，又有新的字符传过来，那么这个字符将丢失。
 
 > 于是，研制人员想了个办法解决这个问题，就是在每行后面加两个表示结束的字符。一个叫做"回车"，告诉打字机把打印头定位在左边界；另一个叫做"换行"，告诉打字机把纸向下移一行。
@@ -21,12 +32,10 @@ category: blog
 
 我们来验证一下，我在 Windows 下用记事本新建一个文本文件，它的二进制编码如下：
 
-    //源文件内容
-    hello
-    hello2
-
-    //二进制内容
-    0000000: 6865 6c6c 6f0d 0a68 656c 6c6f 32         hello..hello2
+    <repository>
+        <id>dpm-Release</id>
+        <url>http://vpn.dpm.im:8081/nexus/content/repositories/releases/</url>
+    </repository>
 
 同样在 Mac 下用 Vim 新建一个：
 
