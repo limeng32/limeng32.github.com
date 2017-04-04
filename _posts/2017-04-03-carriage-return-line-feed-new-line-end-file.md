@@ -23,7 +23,7 @@ category: blog
     <groupId>indi.mybatis</groupId>
     <artifactId>mybatis.flying</artifactId>
     
-即可以使用。当前最新版本为0.7.0。flying默认依赖Mybatis-3.2.5版本，如果您对实际项目中的Mybatis版本有特别需求（但建议使用Mybatis-3系列之下版本）或您使用的是个人定制版的Mybatis，您可以在依赖配置中加入exclusions，就像下面这样：
+即可以使用。当前最新版本为0.7.0。flying默认依赖Mybatis-3.2.5版本，如果您对实际项目中的Mybatis版本有特别需求（但建议使用Mybatis-3系列内的版本）或您使用的是个人定制版的Mybatis，您可以在依赖配置中加入exclusions，就像下面这样：
 
     <dependency>
         <groupId>indi.mybatis</groupId>
