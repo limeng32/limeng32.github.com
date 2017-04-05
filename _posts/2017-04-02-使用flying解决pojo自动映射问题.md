@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 使用Github Pages建独立博客
-description: Github本身就是不错的代码社区，他也提供了一些其他的服务，比如Github Pages，使用它可以很方便的建立自己的独立博客，并且免费。
+title: 使用flying解决pojo自动映射问题
+description: 本节内容向您讲解如何使用AutoMapperInterceptor拦截器来实现pojo的自动映射。
 category: blog
 ---
 
