@@ -1,6 +1,6 @@
 ---
-layout:     post
-title:      使用flying完善Mybatis自带的二级缓存
+layout:post
+title:使用flying完善Mybatis自带的二级缓存
 category: blog
 description: 本节内容向您讲解如何使用EnhancedCachingInterceptor拦截器来“改造”Mybatis的二级缓存使其可用。
 ---
