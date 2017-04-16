@@ -27,7 +27,7 @@ category: blog
     package myPackage;
     public interface AccountMapper {
         public Account select(Object id);
-		public Account selectOne(Account t);
+	    public Account selectOne(Account t);
     }
     
 
