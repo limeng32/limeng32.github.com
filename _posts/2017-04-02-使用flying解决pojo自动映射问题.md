@@ -15,18 +15,15 @@ category: blog
     <mapper namespace="myPackage.AccountMapper">
         <cache />
 	    <select id="select" resultMap="result">#{id}</select>
-	    <select id="selectAll" resultMap="result">#{cacheKey}</select>
-	    <select id="selectOne" resultMap="result">#{cacheKey}</select>
-	    <select id="count" resultType="int">#{cacheKey}</select>
-	    <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
-	    <update id="update" />
-	    <update id="updatePersistent" />
-	    <delete id="delete" />
 	    <resultMap id="result" type="Account" autoMapping="true">
             <id property="id" column="account_id" />
         </resultMap>
     </mapper>
  
+在以上配置文件中，我们描述了一个接口<i>myPackage.AccountMapper</i>，一个方法<i>select</i>，以及一个对象实体<i>Account</i>。
+<i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应，比如在本例中，AccountMapper的内容是：
+
+
 <ul>
     <li>轻量级的博客系统，没有麻烦的配置</li>
     <li>使用标记语言，比如<a href="http://markdown.tw">Markdown</a></li>
