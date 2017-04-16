@@ -5,10 +5,20 @@ description: 本节内容向您讲解如何使用AutoMapperInterceptor拦截器�
 category: blog
 ---
 
-[Github][]很好的将代码和社区联系在了一起，于是发生了很多有趣的事情，世界也因为他美好了一点点。Github作为现在最流行的代码仓库，已经得到很多大公司和项目的青睐，比如[jQuery][]、[Twitter][]等。为使项目更方便的被人理解，介绍页面少不了，甚至会需要完整的文档站，Github替你想到了这一点，他提供了[Github Pages][]的服务，不仅可以方便的为项目建立介绍站点，也可以用来建立个人博客。
+## Hello World
 
-Github Pages有以下几个优点：
-
+上一篇文章中我们介绍了flying的基本情况，在展示第一个demo之前还需要做一些额外的工作，即描述你想让mybatis托管的数据的表结构。
+无论是否使用flying插件，对于每一个由mybatis托管的表，都要有一个<i>pojo_mapper.xml</i>来告诉mybatis这个表的基本信息。在以往这个配置文件可能会因为sql片段而变得非常复杂，但加入flying插件后，这个配置文件中将不需要sql片段，变得精简而统一。下面是一个有代表性的配置文件account.xml：
+ 
+    <plugins>
+        <plugin interceptor="indi.mybatis.flying.interceptors.AutoMapperInterceptor">
+            <property name="dialect" value="mysql" />
+        </plugin>
+        <plugin interceptor="indi.mybatis.flying.interceptors.EnhancedCachingInterceptor">
+            <property name="cacheEnabled" value="true" />
+        </plugin>
+    </plugins>
+ 
 <ul>
     <li>轻量级的博客系统，没有麻烦的配置</li>
     <li>使用标记语言，比如<a href="http://markdown.tw">Markdown</a></li>
