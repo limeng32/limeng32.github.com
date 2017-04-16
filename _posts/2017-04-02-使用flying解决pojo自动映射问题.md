@@ -12,17 +12,17 @@ category: blog
  
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-    <mapper namespace="cn.chinaunicom.awarding.mapper.AccountMapper">
+    <mapper namespace="myPackage.AccountMapper">
         <cache />
-	<select id="select" resultMap="result">#{id}</select>
-	<select id="selectAll" resultMap="result">#{cacheKey}</select>
-	<select id="selectOne" resultMap="result">#{cacheKey}</select>
-	<select id="count" resultType="int">#{cacheKey}</select>
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
-	<update id="update" />
-	<update id="updatePersistent" />
-	<delete id="delete" />
-	<resultMap id="result" type="Account" autoMapping="true">
+	    <select id="select" resultMap="result">#{id}</select>
+	    <select id="selectAll" resultMap="result">#{cacheKey}</select>
+	    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+	    <select id="count" resultType="int">#{cacheKey}</select>
+	    <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
+	    <update id="update" />
+	    <update id="updatePersistent" />
+	    <delete id="delete" />
+	    <resultMap id="result" type="Account" autoMapping="true">
             <id property="id" column="account_id" />
         </resultMap>
     </mapper>
