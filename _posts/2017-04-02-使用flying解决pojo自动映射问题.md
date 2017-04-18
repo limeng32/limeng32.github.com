@@ -92,7 +92,7 @@ category: blog
 
 与以往的方式相比，这种方式是不是变得优雅了很多？关于select和selectOne之间的区别，我们在后面的章节会讲到。
 
-## insert、delete、update以及更多
+## insert、delete
 
 在最基本的select之后，我们再看新增功能。但在此之前，需要先在<i>account.xml</i>中增加以下内容：
 
@@ -117,10 +117,31 @@ category: blog
 
 然后在<i>AccountMapper.java</i>中加入
 
-   public int delete(Account t);
+    public int delete(Account t);
 
 就可以了。例如使用以下代码，可以删掉id与<i>accountToDelete</i>的id一致的数据。
 
     accountService.delete(accountToDelete);
+
+delete方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过insert和delete方法的返回值来实现更复杂的事务逻辑。
+
+## update、updatePersistent
+
+接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和updatePersistent（完全更新）。首先，在<i>account.xml</i>中增加以下内容：
+
+    <update id="update"></update>
+    <update id="updatePersistent"></update>
+
+上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
+
+然后在<i>AccountMapper.java</i>中加入
+
+    public int update(Account t);
+    public int updatePersistent(Account t);
+
+就可以了。例如使用以下代码，可以将<i>accountToUpdate</i>的name更新为duke。
+
+    accountToUpdate.setName("duke");
+    accountService.update(accountToUpdate);
 
 a
