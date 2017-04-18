@@ -143,4 +143,21 @@ delete方法的返回值代表执行sql后产生影响的条数，一般来说�
     accountToUpdate.setName("duke");
     accountService.update(accountToUpdate);
 
-a
+下面我们来说明update和updatePersistent和关系。如果我们执行
+
+    accountToUpdate.setName(null);
+    accountService.update(accountToUpdate);
+
+实际上数据库中这条数据的name字段不会改变，因为flying对为null的属性有保护措施这在大多数情况下都是方便的。但如果我们真的需要在数据库中将这条数据的name字段设为null，updatePersistent就派上了用场。我们可以执行
+
+    accountToUpdate.setName(null);
+    accountService.updatePersistent(accountToUpdate);
+
+这样数据库中这条数据就会发生变化。可见`updatePersistent`会把pojo中所有的属性都更新到数据库中，而`update`只更新不为null的属性。在实际使用`updatePersistent`时，需要特别小心慎重，因为你的pojo中当时为null的属性有可能比你想象的多！
+
+为了能更清晰的展示，我们需要给<i>Account.java</i>再增加一个属性：
+
+    @FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
+    private java.lang.String address;
+
+（相关的getter和setter方法请自行补充）
