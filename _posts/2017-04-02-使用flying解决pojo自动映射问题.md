@@ -92,7 +92,7 @@ category: blog
 
 与以往的方式相比，这种方式是不是变得优雅了很多？关于select和selectOne之间的区别，我们在后面的章节会讲到。
 
-## insert、delete
+## insert & delete
 
 在最基本的select之后，我们再看新增功能。但在此之前，需要先在<i>account.xml</i>中增加以下内容：
 
@@ -122,9 +122,9 @@ category: blog
 
     accountService.delete(accountToDelete);
 
-delete方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过insert和delete方法的返回值来实现更复杂的事务逻辑。
+delete方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过判断delete方法的返回值来实现更复杂的事务逻辑。
 
-## update、updatePersistent
+## update & updatePersistent
 
 接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和updatePersistent（完全更新）。首先，在<i>account.xml</i>中增加以下内容：
 
@@ -143,17 +143,21 @@ delete方法的返回值代表执行sql后产生影响的条数，一般来说�
     accountToUpdate.setName("duke");
     accountService.update(accountToUpdate);
 
+update和updatePersistent方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过判断update和updatePersistent方法的返回值来实现更复杂的事务逻辑。
+
 下面我们来说明update和updatePersistent和关系。如果我们执行
 
     accountToUpdate.setName(null);
     accountService.update(accountToUpdate);
 
-实际上数据库中这条数据的name字段不会改变，因为flying对为null的属性有保护措施这在大多数情况下都是方便的。但如果我们真的需要在数据库中将这条数据的name字段设为null，updatePersistent就派上了用场。我们可以执行
+实际上数据库中这条数据的name字段不会改变，因为flying对为null的属性有保护措施。这在大多数情况下都是方便的，但如果我们真的需要在数据库中将这条数据的name字段设为null，updatePersistent就派上了用场。我们可以执行
 
     accountToUpdate.setName(null);
     accountService.updatePersistent(accountToUpdate);
 
 这样数据库中这条数据就会发生变化。可见`updatePersistent`会把pojo中所有的属性都更新到数据库中，而`update`只更新不为null的属性。在实际使用`updatePersistent`时，需要特别小心慎重，因为你的pojo中当时为null的属性有可能比你想象的多！
+
+## selectAll & count
 
 为了能更清晰的展示，我们需要给<i>Account.java</i>再增加一个属性：
 
