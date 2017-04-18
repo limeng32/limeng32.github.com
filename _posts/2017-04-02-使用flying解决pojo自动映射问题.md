@@ -106,10 +106,9 @@ category: blog
 
 就可以了。例如使用以下代码，可以增加1条name为<i>bob</i>的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
 
-
     Account newAccount = new Account();
-	newAccount.setName("bob");
-	accountService.insert(newAccount);
+    newAccount.setName("bob");
+    accountService.insert(newAccount);
 
 然后我们再看删除功能。先在<i>account.xml</i>中增加以下内容：
 
