@@ -94,7 +94,7 @@ category: blog
 
 ## insert、delete、update以及更多
 
-在最基本的select之后，我们再看新增功能。但在此之前，需要先在配置文件和代码中增加一些内容：
+在最基本的select之后，我们再看新增功能。但在此之前，需要先在<i>account.xml</i>中增加以下内容：
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 
@@ -104,12 +104,23 @@ category: blog
 
     public void insert(Account t);
 
-然后使用以下代码，可以增加1条name为<i>bob</i>的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
+就可以了。例如使用以下代码，可以增加1条name为<i>bob</i>的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
 
 
-     Account newAccount = new Account();
-     newAccount.setName("bob");
-     accountService.insert(newAccount);
+    Account newAccount = new Account();
+	newAccount.setName("bob");
+	accountService.insert(newAccount);
 
+然后我们再看删除功能。先在<i>account.xml</i>中增加以下内容：
 
+    <delete id="delete"></delete>
 
+然后在<i>AccountMapper.java</i>中加入
+
+   public int delete(Account t);
+
+就可以了。例如使用以下代码，可以删掉id与<i>accountToDelete</i>的id一致的数据。
+
+    accountService.delete(accountToDelete);
+
+a
