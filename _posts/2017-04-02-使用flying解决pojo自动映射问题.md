@@ -84,8 +84,7 @@ category: blog
 
      Account account = accountService.select(1);
      
-使用以下代码，可以查询name为andy的<b>一个</b>账户：
-
+使用以下代码，可以查询name为andy的<b>一</b>条账户数据：
      Account accountCondition = new Account();
      accountCondition.setName("andy");
      Account account = accountService.selectOne(accountCondition);
