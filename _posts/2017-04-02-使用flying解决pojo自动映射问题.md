@@ -23,7 +23,7 @@ category: blog
  
 在以上配置文件中，我们描述了一个接口<i>myPackage.AccountMapper</i>，一个方法<i>select</i>，一个方法<i>selectOne</i>，一个对象实体<i>Account</i>，以及表结构<i>resultMap</i>。在<i>resultMap</i>中由于设置了`autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段mybatis会自动感知。
 
-<i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果你有使用mybatis的经验你就能预想到，<i>AccountMapper</i>中的内容是：
+<i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果你有使用mybatis的经验你就能猜到，<i>AccountMapper.java</i>中的内容是：
 
     package myPackage;
     public interface AccountMapper {
@@ -84,11 +84,32 @@ category: blog
 
      Account account = accountService.select(1);
      
-使用以下代码，可以查询name为andy的<b>一</b>条账户数据：
+使用以下代码，可以查询name为andy的<b>1</b>条账户数据：
+
      Account accountCondition = new Account();
      accountCondition.setName("andy");
      Account account = accountService.selectOne(accountCondition);
 
-与以往的方式相比，这种方式是不是变得优雅了很多？
+与以往的方式相比，这种方式是不是变得优雅了很多？关于select和selectOne之间的区别，我们在后面的章节会讲到。
 
-## insert、update、delete以及更多
+## insert、delete、update以及更多
+
+在最基本的select之后，我们再看新增功能。但在此之前，需要先在配置文件和代码中增加一些内容：
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
+
+上面的`useGeneratedKeys="true"`表示主键自增，如果你不使用主键自增策略此处可以省略，上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
+
+同样在<i>AccountMapper.java</i>中我们需要加入
+
+    public void insert(Account t);
+
+然后使用以下代码，可以增加1条name为<i>bob</i>的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
+
+
+     Account newAccount = new Account();
+     newAccount.setName("bob");
+     accountService.insert(newAccount);
+
+
+
