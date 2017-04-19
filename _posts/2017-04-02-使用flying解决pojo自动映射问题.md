@@ -165,3 +165,22 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
     private java.lang.String address;
 
 （相关的getter和setter方法请自行补充）
+
+然后我们在<i>account.xml</i>中增加以下内容：
+
+    <select id="selectAll" resultMap="result">#{cacheKey}</select>
+    <select id="count" resultType="int">#{cacheKey}</select>
+
+再在<i>AccountMapper.java</i>中加入
+
+    public Collection<Account> selectAll(Account t);
+    public int count(Account t);
+
+就可以了。例如使用以下代码，可以查询所有address为“beijing”的数据和数量：
+
+    Account condition = new Account();
+    condition.setAddress("beijing");
+    Collection<Account> accountCollection = accountService.selectAll(condition);
+    int accountNumber = accountService.count(condition);
+    
+（当然一般来说执行selectAll后就不需要执行count了，我们取结果集的size即可，但如果我们只关心数量不关心具体数据集时，执行count比执行selectAll更节省时间）
