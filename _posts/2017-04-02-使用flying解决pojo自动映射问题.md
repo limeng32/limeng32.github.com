@@ -192,4 +192,12 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
     condition.setName("ella");
     Collection<Account> accountCollection = accountService.selectAll(condition);
 
-a
+如果我们知道address为“shanghai”<b>同时</b>name为“ella”的账户只有一个，并想直接返回这个数据绑定的pojo，可以执行： 
+
+    Account account = accountService.selectOne(condition);
+
+由此可见selectOne可以称作是selectAll的特殊形式，它只会返回一个pojo而不是pojo的集合。如果确实有多条数据符合给定的codition，也只会返回查询结果中排在最前面的数据，这一点用户在使用selectOne时需要了解。无论如何，在合适的地方使用selectOne代替selectAll，会让你的程序获得极大便利。
+
+## foreign key
+
+一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎<b>一对一</b>、<b>一对多</b>和<b>多对多</b>等。其中<b>一对一</b>是<b>一对多</b>的特殊形式，<b>多对多</b>本质是两个<b>一对多</b>，所以我们只需要着重解决<b>一对多</b>关系，而flying简直就是为此而生。
