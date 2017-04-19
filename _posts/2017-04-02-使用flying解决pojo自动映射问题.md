@@ -195,7 +195,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 
 如果我们知道address为“shanghai”<b>同时</b>name为“ella”的账户只有一个，并想直接返回这个数据绑定的pojo，可以执行： 
 
-    Account account = accountService.selectOne(condition);
+    Account account = accountService.selectOne(condition);
 
 由此可见selectOne可以称作是selectAll的特殊形式，它只会返回一个pojo而不是pojo的集合。如果确实有多条数据符合给定的codition，也只会返回查询结果中排在最前面的数据，这一点用户在使用selectOne时需要了解。无论如何，在合适的地方使用selectOne代替selectAll，会让你的程序获得极大便利。
 
