@@ -159,7 +159,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 
 ## selectAll & count
 
-为了能更清晰的展示，我们需要给<i>Account.java</i>再增加一个属性：
+在之前学习select和selectOne时，细心的你可能已经发现，这两个方法要完成的工作似乎是相同的。的确select和selectOne都返回<i>1</i>个绑定了数据的pojo，但它们接受的参数不同：select接受主键参数；selectOne接受pojo参数，这个pojo中的所有被`@FieldMapperAnnotation`标记过的属性都会作为“相等”条件传递到sql语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即selectAll方法与count方法，这个时候以pojo作为入参最为合适。为了更清晰的讲述，我们先给给<i>Account.java</i>再增加一个属性address：
 
     @FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
     private java.lang.String address;
