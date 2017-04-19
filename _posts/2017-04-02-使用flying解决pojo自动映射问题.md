@@ -41,7 +41,7 @@ category: blog
     
     @TableMapperAnnotation(tableName = "account")
     public class Account {
-        @FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
+        @FieldMapperAnnotation(dbFieldName = "account_id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
 	    private Integer id;
 	    
 	    @FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR)
@@ -201,4 +201,54 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 
 ## foreign key
 
-一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎<b>一对一</b>、<b>一对多</b>和<b>多对多</b>等。其中<b>一对一</b>是<b>一对多</b>的特殊形式，<b>多对多</b>本质是两个<b>一对多</b>，所以我们只需要着重解决<b>一对多</b>关系，而flying简直就是为此而生。
+一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎<b>一对一</b>、<b>一对多</b>和<b>多对多</b>等。其中<b>一对一</b>是<b>一对多</b>的特殊形式，<b>多对多</b>本质是两个<b>一对多</b>，所以我们只需要着重解决<b>一对多</b>关系，而flying完全就是为此而生。
+
+首先我们定义一个新的pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建<i>role.xml</i>、<i>RoleMapper.java</i>以及<i>Role.java</i>。<i>role.xml</i>如下：
+ 
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="myPackage.RoleMapper">
+        <cache />
+	    <select id="select" resultMap="result">#{id}</select>
+	    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+	    <select id="selectAll" resultMap="result">#{cacheKey}</select>
+	    <select id="count" resultType="int">#{cacheKey}</select>
+	    <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
+	    <update id="update"></update>
+	    <update id="updatePersistent"></update>
+	    <resultMap id="result" type="Role" autoMapping="true">
+            <id property="id" column="role_id" />
+        </resultMap>
+    </mapper>
+ 
+ <i>RoleMapper.java</i>如下：
+ 
+    package myPackage;
+    public interface RoleMapper {
+        public Role select(Object id);
+	    public Role selectOne(Role t);
+	    public Collection<Role> selectAll(Role t);
+	    public void insert(Role t);
+	    public int update(Role t);
+	    public int updatePersistent(Role t);
+	    public int delete(Role t);
+	    public int count(Role t);
+    }
+    
+<i>Role.java</i>如下：
+  
+    package myPackage;
+    import org.apache.ibatis.type.JdbcType;
+    import indi.mybatis.flying.annotations.FieldMapperAnnotation;
+    import indi.mybatis.flying.annotations.TableMapperAnnotation;
+    
+    @TableMapperAnnotation(tableName = "role")
+    public class Role {
+        @FieldMapperAnnotation(dbFieldName = "role_id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
+	    private Integer id;
+	    
+	    @FieldMapperAnnotation(dbFieldName = "role_name", jdbcType = JdbcType.VARCHAR)
+	    private String roleName;
+    }
+   
+   （相关的getter和setter方法请自行补充）
