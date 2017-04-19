@@ -183,6 +183,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
     Collection<Account> accountCollection = accountService.selectAll(condition);
     int accountNumber = accountService.count(condition);
     
+
 （当然一般来说执行selectAll后就不需要执行count了，我们取结果集的size即可，但如果我们只关心数量不关心具体数据集时，执行count比执行selectAll更节省时间）
 
 如果我们想查询所有address为“shanghai”<b>同时</b>name为“ella”的账户，则执行以下代码： 
