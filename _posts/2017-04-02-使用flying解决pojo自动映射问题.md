@@ -235,6 +235,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 	    public int count(Role t);
     }
     
+
 <i>Role.java</i>如下：
   
     package myPackage;
@@ -252,3 +253,5 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
     }
    
    （相关的getter和setter方法请自行补充）
+
+然后在<i>Account.java</i>中，加入以下内容：
