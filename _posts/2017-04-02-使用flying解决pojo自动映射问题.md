@@ -255,3 +255,8 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
    （相关的getter和setter方法请自行补充）
 
 然后在<i>Account.java</i>中，加入以下内容：
+  
+    @FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
+	private Role role;
+   
+以上代码中，<b>dbFieldName</b>指示数据库表account中指向表role的外键，<b>jdbcType</b>指示这个外键的类型，<b>dbAssociationUniqueKey</b>指示此外键对应的表的主键的名称，写出以上信息后，fly在代码层面已经完全了解数据结构。
