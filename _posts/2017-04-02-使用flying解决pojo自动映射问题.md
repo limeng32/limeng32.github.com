@@ -261,6 +261,6 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
    
    （相关的getter和setter方法请自行补充）
    
-以上代码中，<b>dbFieldName</b>指示数据库表account中指向表role的外键，<b>jdbcType</b>指示这个外键的类型，<b>dbAssociationUniqueKey</b>指示此外键对应的表的主键的名称，写出以上信息后，fly在代码层面已经完全了解数据结构。
+以上代码中，<b>dbFieldName</b>的值为数据库表account中指向表role的外键，<b>jdbcType</b>的值为这个外键的类型，<b>dbAssociationUniqueKey</b>的值为此外键对应的表的主键的名称，写出以上信息后，flying在代码层面已经完全理解了数据结构。
 
-最后
+最后在<i>account.xml</i>中，加入以下内容
