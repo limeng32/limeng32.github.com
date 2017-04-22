@@ -257,7 +257,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 然后在<i>Account.java</i>中，加入以下内容：
   
     @FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
-        private Role role;
+	private Role role;
    
    （相关的getter和setter方法请自行补充）
    
