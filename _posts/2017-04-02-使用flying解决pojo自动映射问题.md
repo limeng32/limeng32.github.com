@@ -328,7 +328,7 @@ accountService.insert(newAccount);
 
 //我们用update方法将iris的角色变为"super_user"
 Role role2 = roleService.select(11);
-//角色名称为"super_user"的数据的role_id是11，现在role1已经加载了它
+//现在role2的roleName为"super_user"
 newAccount.setRole(role2);
 accountService.update(newAccount);
 //现在newAccount.getRole().getId()为11，newAccount.getRole().getRoleName为"super_user"
