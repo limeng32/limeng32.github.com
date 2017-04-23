@@ -274,7 +274,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
  
     <?xml version="1.0" encoding="UTF-8"?>
     <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-    <mapper namespace="myPackage.RoleMapper">
+    <mapper namespace="myPackage.AccountMapper">
         <cache />
 	    <select id="select" resultMap="result">#{id}</select>
 	    <select id="selectOne" resultMap="result">#{cacheKey}</select>
@@ -285,7 +285,8 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 	    <update id="updatePersistent"></update>
 	    <resultMap id="result" type="Role" autoMapping="true">
             <id property="id" column="role_id" />
+	    <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" />
         </resultMap>
     </mapper>
  
-a
+ 在写完以上代码后，我们看看flying能做到什么。首先多对一关系中的<b>一<b/>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的，为了说明接下来的例子，我们先定义一个源数据（以dataset的方式）
