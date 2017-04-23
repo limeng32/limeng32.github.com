@@ -265,6 +265,26 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 
 最后在<i>account.xml</i>的resultMap元素中，加入以下内容
    
-    <association property="role" javaType="Role_" select="indi.mybatis.flying.mapper.RoleMapper.select" column="role_id" /> 
-   
+    <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" /> 
+   
+写出以上信息后，flying在配置文件层面已经完全理解了数据结构。
+
+最后完整版的<i>account.xml</i>如下：
+ 
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="myPackage.RoleMapper">
+        <cache />
+	    <select id="select" resultMap="result">#{id}</select>
+	    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+	    <select id="selectAll" resultMap="result">#{cacheKey}</select>
+	    <select id="count" resultType="int">#{cacheKey}</select>
+	    <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
+	    <update id="update"></update>
+	    <update id="updatePersistent"></update>
+	    <resultMap id="result" type="Role" autoMapping="true">
+            <id property="id" column="role_id" />
+        </resultMap>
+    </mapper>
+ 
 a
