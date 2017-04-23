@@ -14,12 +14,12 @@ category: blog
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
-<cache />
+    <cache />
     <select id="select" resultMap="result">#{id}</select>
     <select id="selectOne" resultMap="result">#{cacheKey}</select>
     <resultMap id="result" type="Account" autoMapping="true">
-    <id property="id" column="account_id" />
-</resultMap>
+        <id property="id" column="account_id" />
+    </resultMap>
 </mapper>
 ``` 
 在以上配置文件中，我们描述了一个接口<i>myPackage.AccountMapper</i>，一个方法<i>select</i>，一个方法<i>selectOne</i>，一个对象实体<i>Account</i>，以及表结构<i>resultMap</i>。在<i>resultMap</i>中由于设置了`autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段mybatis会自动感知。
