@@ -8,19 +8,20 @@ category: blog
 ## Hello World
 
 上一篇文章中我们介绍了flying的基本情况，在展示第一个demo之前还需要做一些额外的工作，即描述你想让mybatis托管的数据的表结构。
+
 无论是否使用flying插件，对于每一个由mybatis托管的表，都要有一个<i>pojo_mapper.xml</i>来告诉mybatis这个表的基本信息。在以往这个配置文件可能会因为sql片段而变得非常复杂，但加入flying插件后，这个配置文件中将不需要sql片段，变得精简而统一。下面是一个有代表性的配置文件account.xml：
- 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-    <mapper namespace="myPackage.AccountMapper">
-        <cache />
-	    <select id="select" resultMap="result">#{id}</select>
-	    <select id="selectOne" resultMap="result">#{cacheKey}</select>
-	    <resultMap id="result" type="Account" autoMapping="true">
-            <id property="id" column="account_id" />
-        </resultMap>
-    </mapper>
- 
+``` 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="myPackage.AccountMapper">
+<cache />
+    <select id="select" resultMap="result">#{id}</select>
+    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+    <resultMap id="result" type="Account" autoMapping="true">
+    <id property="id" column="account_id" />
+</resultMap>
+</mapper>
+``` 
 在以上配置文件中，我们描述了一个接口<i>myPackage.AccountMapper</i>，一个方法<i>select</i>，一个方法<i>selectOne</i>，一个对象实体<i>Account</i>，以及表结构<i>resultMap</i>。在<i>resultMap</i>中由于设置了`autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段mybatis会自动感知。
 
 <i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果你有使用mybatis的经验你就能猜到，<i>AccountMapper.java</i>中的内容是：
@@ -299,4 +300,12 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 	    <role role_id="11" role_name="super_user" />
     </dataset>
  
- a
+```
+<dataset>
+	<account account_id="1" fk_role_id="10" address="beijing" name="frank" />
+    	<account account_id="2" fk_role_id="11" address="tianjin" name="gale" />
+    	<account account_id="3" fk_role_id="11" address="guangzhou" name="hank" />
+    	<role role_id="10" role_name="user" />
+	<role role_id="11" role_name="super_user" />
+</dataset>
+```
