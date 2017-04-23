@@ -267,6 +267,7 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
    
     <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" /> 
    
+
 写出以上信息后，flying在配置文件层面已经完全理解了数据结构。
 
 最后完整版的<i>account.xml</i>如下：
