@@ -263,4 +263,8 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
    
 以上代码中，<b>dbFieldName</b>的值为数据库表account中指向表role的外键，<b>jdbcType</b>的值为这个外键的类型，<b>dbAssociationUniqueKey</b>的值为此外键对应的表的主键的名称，写出以上信息后，flying在代码层面已经完全理解了数据结构。
 
-最后在<i>account.xml</i>中，加入以下内容
+最后在<i>account.xml</i>的resultMap元素中，加入以下内容
+   
+    <association property="role" javaType="Role_" select="indi.mybatis.flying.mapper.RoleMapper.select" column="role_id" /> 
+   
+a
