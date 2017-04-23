@@ -283,10 +283,20 @@ update和updatePersistent方法的返回值代表执行sql后产生影响的条�
 	    <insert id="insert" useGeneratedKeys="true" keyProperty="id"></insert>
 	    <update id="update"></update>
 	    <update id="updatePersistent"></update>
-	    <resultMap id="result" type="Role" autoMapping="true">
-            <id property="id" column="role_id" />
+	    <resultMap id="result" type="Account" autoMapping="true">
+            <id property="id" column="account_id" />
 	    <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" />
         </resultMap>
     </mapper>
  
- 在写完以上代码后，我们看看flying能做到什么。首先多对一关系中的<b>一<b/>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的，为了说明接下来的例子，我们先定义一个源数据（以dataset的方式）
+ 在写完以上代码后，我们看看flying能做到什么。首先多对一关系中的<b>一<b/>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的，为了说明接下来的例子，我们先以dataset的方式定义一个源数据
+ 
+    <dataset>
+        <account account_id="1" fk_role_id="10" address="beijing" name="frank" />
+	    <account account_id="2" fk_role_id="11" address="tianjin" name="gale" />
+	    <account account_id="3" fk_role_id="11" address="guangzhou" name="hank" />
+	    <role role_id="10" role_name="user" />
+	    <role role_id="11" role_name="super_user" />
+    </dataset>
+ 
+ a
