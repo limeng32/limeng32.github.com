@@ -350,8 +350,8 @@ import indi.mybatis.flying.models.Conditionable;
 import indi.mybatis.flying.statics.ConditionType;
 @QueryMapperAnnotation(tableName = "account")
 public class AccountCondition extends Account implements Conditionable {
-    @ConditionMapperAnnotation(dbFieldName = "name", conditionType = ConditionType.Like)
-    //用作 name 全匹配的值
+        @ConditionMapperAnnotation(dbFieldName = "name", conditionType = ConditionType.Like)
+        //用作 name 全匹配的值
 	private String nameLike;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.HeadLike)
@@ -379,9 +379,10 @@ public class AccountCondition extends Account implements Conditionable {
 	private Collection<String> addressNotIn;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NullOrNot)
-	//用作 address 是否为null的判断（类型只能为Boolean）
+	//用作 address 是否为 null 的判断（类型只能为Boolean）
 	private Boolean addressIsNull;
 	
 	//相关的getter和setter方法请自行补充
 }
+
 ```
