@@ -328,7 +328,7 @@ accountService.insert(newAccount);
 
 //我们用update方法将iris的角色变为"super_user"
 Role role2 = roleService.select(11);
-//现在role2的roleName为"super_user"
+//角色名称为"super_user"的数据的role_id是11，现在role1已经加载了它
 newAccount.setRole(role2);
 accountService.update(newAccount);
 //现在newAccount.getRole().getId()为11，newAccount.getRole().getRoleName为"super_user"
@@ -341,4 +341,47 @@ accountService.updatePersistent(newAccount);
 
 ## complex condition
 
-之前我们展示的例子中，条件只有“相等”一种，但在实际情况中我们会遇到各种各样的条件：大于、不等于、like、in、is not null 等等。这些情况 flying 也是能够处理的，但首先我们要引入一个“条件对象”的概念。
+之前我们展示的例子中，条件只有“相等”一种，但在实际情况中我们会遇到各种各样的条件：大于、不等于、like、in、is not null 等等。这些情况 flying 也是能够处理的，但首先我们要引入一个“条件对象”的概念。条件对象是实体对象的子类，但它只为查询而存在，它拥有实体对象的全部属性，同时它还有一些专为查询服务的属性。例如下面是 Account 对象的条件对象 AccountCondition 的代码：
+```
+package myPackage;
+import indi.mybatis.flying.annotations.ConditionMapperAnnotation;
+import indi.mybatis.flying.annotations.QueryMapperAnnotation;
+import indi.mybatis.flying.models.Conditionable;
+import indi.mybatis.flying.statics.ConditionType;
+@QueryMapperAnnotation(tableName = "account")
+public class AccountCondition extends Account implements Conditionable {
+    @ConditionMapperAnnotation(dbFieldName = "name", conditionType = ConditionType.Like)
+    //用作 name 全匹配的值
+	private String nameLike;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.HeadLike)
+	//用作 address 开头匹配的值
+	private String addressHeadLike;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.TailLike)
+	//用作 address 结尾匹配的值
+	private String addressTailLike;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeAND)
+	//用作 address 需要同时匹配的若干个值的集合（类型只能为List）
+	private List<String> addressMultiLikeAND;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeOR)
+	//用作 address 需要至少匹配之一的若干个值的集合（类型只能为List）
+	private List<String> addressMultiLikeOR;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.In)
+	//用作 address 可能等于的若干个值的集合（类型可为任意Collection）
+	private Collection<String> addressIn;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NotIn)
+	//用作 address 不可能等于的若干个值的集合（类型可为任意Collection）
+	private Collection<String> addressNotIn;
+	
+	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NullOrNot)
+	//用作 address 是否为null的判断（类型只能为Boolean）
+	private Boolean addressIsNull;
+	
+	//相关的getter和setter方法请自行补充
+}
+```
