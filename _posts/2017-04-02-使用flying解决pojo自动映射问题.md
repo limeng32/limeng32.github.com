@@ -6,7 +6,6 @@ category: blog
 ---
 
 ## Hello World
-
 上一篇文章中我们介绍了flying的基本情况，在展示第一个demo之前还需要做一些额外的工作，即描述你想让mybatis托管的数据的表结构。
 
 无论是否使用flying插件，对于每一个由mybatis托管的表，都要有一个<i>pojo_mapper.xml</i>来告诉mybatis这个表的基本信息。在以往这个配置文件可能会因为sql片段而变得非常复杂，但加入flying插件后，这个配置文件中将不需要sql片段，变得精简而统一。下面是一个有代表性的配置文件account.xml：
@@ -90,7 +89,6 @@ Account account = accountService.selectOne(accountCondition);
 与以往的方式相比，这种方式是不是变得优雅了很多？关于select和selectOne之间的区别，我们在后面的章节会讲到。
 
 ## insert & delete
-
 在最基本的select之后，我们再看新增功能。但在此之前，需要先在<i>account.xml</i>中增加以下内容：
 ```
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
@@ -122,7 +120,6 @@ accountService.delete(accountToDelete);
 delete方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过判断delete方法的返回值来实现更复杂的事务逻辑。
 
 ## update & updatePersistent
-
 接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和updatePersistent（完全更新）。首先，在<i>account.xml</i>中增加以下内容：
 ```
 <update id="update" />
@@ -155,7 +152,6 @@ accountService.updatePersistent(accountToUpdate);
 这样数据库中这条数据的name字段就会变为null。可见`updatePersistent`会把pojo中所有的属性都更新到数据库中，而`update`只更新不为null的属性。在实际使用`updatePersistent`时，需要特别小心慎重，因为你的pojo中当时为null的属性有可能比你想象的多。
 
 ## selectAll & count
-
 在之前学习select和selectOne时，细心的你可能已经发现，这两个方法要完成的工作似乎是相同的。的确select和selectOne都返回<b>1</b>个绑定了数据的pojo，但它们接受的参数不同：select接受主键参数；selectOne接受pojo参数，这个pojo中的所有被`@FieldMapperAnnotation`标记过的属性都会作为“相等”条件传递到sql语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即selectAll方法与count方法，这个时候以pojo作为入参最为合适。为了更清晰的讲述，我们先给给<i>Account.java</i>再增加一个属性address：
 ```
 @FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
@@ -195,7 +191,6 @@ Account account = accountService.selectOne(condition);
 由此可见selectOne可以称作是selectAll的特殊形式，它只会返回一个pojo而不是pojo的集合。如果确实有多条数据符合给定的codition，也只会返回查询结果中排在最前面的数据，这一点用户在使用selectOne时需要了解。无论如何，在合适的地方使用selectOne代替selectAll，会让你的程序获得极大便利。
 
 ## foreign key
-
 一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而flying完全就是为此而生。
 
 首先我们定义一个新的pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建<i>role.xml</i>、<i>RoleMapper.java</i>以及<i>Role.java</i>。<i>role.xml</i>如下：
@@ -340,10 +335,11 @@ accountService.updatePersistent(newAccount);
 ```
 
 ## complex condition
-
 之前我们展示的例子中，条件只有“相等”一种，但在实际情况中我们会遇到各种各样的条件：大于、不等于、like、in、is not null 等等。这些情况 flying 也是能够处理的，但首先我们要引入一个“条件对象”的概念。条件对象是实体对象的子类，但它只为查询而存在，它拥有实体对象的全部属性，同时它还有一些专为查询服务的属性。例如下面是 Account 对象的条件对象 AccountCondition 的代码：
 ```
 package myPackage;
+import java.util.Collection;
+import java.util.List;
 import indi.mybatis.flying.annotations.ConditionMapperAnnotation;
 import indi.mybatis.flying.annotations.QueryMapperAnnotation;
 import indi.mybatis.flying.models.Conditionable;
@@ -447,3 +443,33 @@ int countX = accountService.count(conditionX);
 /*这个用例说明所有条件变量都是可以组合使用的*/
 ```
 ## limiter & sorter
+在之前的 selectAll 查询中我们都是取符合条件的所有值，但在实际业务需求中很少会这样做，更多的情况是我们会有一个数量限制。同时我们还会希望结果集是经过某种条件排序，甚至是经过多种条件排序的，幸运的是，flying 已经为此做好了准备。
+一个可限制数量并可排序的查询对象也是由<i>查询对象</i>来实现的，代码如下：
+```
+package myPackage;
+import indi.mybatis.flying.annotations.QueryMapperAnnotation;
+import indi.mybatis.flying.models.Conditionable;
+import indi.mybatis.flying.models.Limitable;
+import indi.mybatis.flying.models.Sortable;
+@QueryMapperAnnotation(tableName = "account")
+public class AccountCondition extends Account implements Conditionable {
+        private Limitable limiter;
+        private Sortable sorter;
+        @Override
+	public Limitable getLimiter() {
+		return limiter;
+	}
+	@Override
+	public void setLimiter(Limitable limiter) {
+		this.limiter = limiter;
+	}
+	@Override
+	public Sortable getSorter() {
+		return sorter;
+	}
+	@Override
+	public void setSorter(Sortable sorter) {
+		this.sorter = sorter;
+	}
+}
+```
