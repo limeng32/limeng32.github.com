@@ -473,3 +473,5 @@ public class AccountCondition extends Account implements Conditionable {
 	}
 }
 ```
+以上 limiter 和 sorter 变量名并非固定，只要类引入了 Limitable 和 Sortable 接口并实现相关方法，且在相关方法中对应上您定义的 limiter 和 sorter 即可。
+然后
