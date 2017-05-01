@@ -387,7 +387,7 @@ public class AccountCondition extends Account implements Conditionable {
 ```
 以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在flying中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。之后我们可以进行测试：
 ```
-/*查询名称中带有“a”的帐户数量*/
+/*查询名称中带有"a"的帐户数量*/
 AccountCondition condition1 = new AccountCondition();
 condition1.setNameLike("a");
 int count1 = accountService.count(condition1);
@@ -417,4 +417,33 @@ listAddressMultiLikeOR.add("i");
 AccountCondition condition5 = new AccountCondition();
 condition5.setAddressMultiLikeOR(listAddressMultiLikeOR);
 int count5 = accountService.count(condition5);
+
+/*查询地址等于"beijing"或"shanghai"中的一个的账户的数量*/
+List<String> listAddressIn = new ArrayList<>();
+listAddressIn.add("beijing");
+listAddressIn.add("shanghai");
+AccountCondition condition6 = new AccountCondition();
+condition6.setAddressIn(listAddressIn);
+int count6 = accountService.count(condition6);
+
+/*查询地址不等于"beijing"或"shanghai"的账户的数量*/
+List<String> listAddressNotIn = new ArrayList<>();
+listAddressNotIn.add("beijing");
+listAddressNotIn.add("shanghai");
+AccountCondition condition7 = new AccountCondition();
+condition7.setAddressNotIn(listAddressNotIn);
+int count7 = accountService.count(condition7);
+
+/*查询地址为null的账户的数量*/
+AccountCondition condition8 = new AccountCondition();
+condition8.setAddressIsNull(true);
+int count8 = accountService.count(condition8);
+
+/*最后我们查询名称中带有"a"且地址以"bei"开头的帐户的数量*/
+AccountCondition conditionX = new AccountCondition();
+conditionX.setNameLike("a");
+conditionX.setAddressHeadLike("bei");
+int countX = accountService.count(conditionX);
+/*这个用例说明所有条件变量都是可以组合使用的*/
 ```
+## limiter & sorter
