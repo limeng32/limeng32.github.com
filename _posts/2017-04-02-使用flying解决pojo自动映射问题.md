@@ -324,7 +324,7 @@ Role role1 = roleService.select(10);
 //角色名称为"user"的数据的role_id是10，现在role1已经加载了它
 newAccount.setRole(role1);
 accountService.insert(newAccount);
-//一个姓名为iris，角色名称为"user"的账号建立完成
+/*一个姓名为iris，角色名称为"user"的账号建立完成*/
 
 //我们用update方法将iris的角色变为"super_user"
 Role role2 = roleService.select(11);
@@ -384,5 +384,37 @@ public class AccountCondition extends Account implements Conditionable {
 	
 	//相关的getter和setter方法请自行补充
 }
+```
+以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在flying中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。之后我们可以进行测试：
+```
+/*查询名称中带有“a”的帐户数量*/
+AccountCondition condition1 = new AccountCondition();
+condition1.setNameLike("a");
+int count1 = accountService.count(condition1);
 
+/*查询地址以"bei"开头的帐户的数量*/
+AccountCondition condition2 = new AccountCondition();
+condition2.setAddressHeadLike("bei");
+int count2 = accountService.count(condition2);
+
+/*查询地址以"jing"结尾的帐户的数量*/
+AccountCondition condition3 = new AccountCondition();
+condition3.setAddressTailLike("jing");
+int count3 = accountService.count(condition3);
+
+/*查询地址同时包含"e"和"i"的账户的数量*/
+List<String> listAddressMultiLikeAND = new ArrayList<>();
+listAddressMultiLikeAND.add("e");
+listAddressMultiLikeAND.add("i");
+AccountCondition condition4 = new AccountCondition();
+condition4.setAddressMultiLikeAND(listAddressMultiLikeAND);
+int count4 = accountService.count(condition4);
+
+/*查询地址至少包含"e"或"i"的账户的数量*/
+List<String> listAddressMultiLikeOR = new ArrayList<>();
+listAddressMultiLikeOR.add("e");
+listAddressMultiLikeOR.add("i");
+AccountCondition condition5 = new AccountCondition();
+condition5.setAddressMultiLikeOR(listAddressMultiLikeOR);
+int count5 = accountService.count(condition5);
 ```
