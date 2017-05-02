@@ -184,7 +184,7 @@ condition.setAddress("shanghai");
 condition.setName("ella");
 Collection<Account> accountCollection = accountService.selectAll(condition);
 ```
-如果我们知道address为“shanghai”<b>同时</b>name为“ella”的账户只有一个，并想直接返回这个数据绑定的pojo，可以执行： 
+如果我们知道 address 为 "shanghai" <b>同时</b> name 为 "ella" 的账户只有一个，并想直接返回这个数据绑定的 pojo，可以执行： 
 ```
 Account account = accountService.selectOne(condition);
 ```
@@ -474,4 +474,35 @@ public class AccountCondition extends Account implements Conditionable {
 }
 ```
 以上 limiter 和 sorter 变量名并非固定，只要类引入了 Limitable 和 Sortable 接口并实现相关方法，且在相关方法中对应上您定义的 limiter 和 sorter 即可。
-然后
+然后可以采用如下代码进行测试：
+```
+import indi.mybatis.flying.models.Conditionable;
+import indi.mybatis.flying.pagination.Order;
+import indi.mybatis.flying.pagination.PageParam;
+import indi.mybatis.flying.pagination.SortParam;
+
+/*查询 account 表在默认排序下前 10 条数据*/
+AccountCondition condition1 = new AccountCondition();
+/*PageParam 的构造函数中第一个参数为起始页数，第二个参数为每页容量，new PageParam(0,10)即从头开始取 10 条数据*/
+condition1.setLimiter(new PageParam(0, 10));
+Collection<Account> collection1 = accountService.selectAll(codition1);
+
+/*查询 account 表在默认排序下第 8 条数据*/
+AccountCondition condition2 = new AccountCondition();
+/*new PageParam(7,1)即从第 7 条开始取 1 条数据*/
+condition2.setLimiter(new PageParam(7, 1));
+/*因为结果只需要一条数据，我们可以使用 selectOne 方法*/
+Account account2 = accountService.selectOne(condition2);
+
+/*查询 account 表在 name 正序排序下的所有数据*/
+AccountCondition condition3 = new AccountCondition();
+/*new Order()的第一个参数是被排序的字段名，第二个参数是正序或倒序*/
+condition3.setSorter(new SortParam(new Order("name", Conditionable.Sequence.asc)));
+Collection<Account> collection3 = accountService.selectAll(codition3);
+
+/*查询 account 表先在 name 正序排序，然后在 address 倒序排序下的所有数据*/
+AccountCondition condition4 = new AccountCondition();
+/*在new SortParam()中可以接受不定数量的 Order 参数，因此我们先新建一个 name 正序，再新建一个 address 倒序*/
+condition4.setSorter(new SortParam(new Order("name", Conditionable.Sequence.asc),new Order("address", Conditionable.Sequence.desc)));
+Collection<Account> collection4 = accountService.selectAll(codition4);
+```
