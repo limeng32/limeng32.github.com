@@ -101,9 +101,9 @@ public void insert(Account t);
 ```
 就可以了。例如使用以下代码，可以增加1条name为<i>bob</i>的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
 ```
-    Account newAccount = new Account();
-    newAccount.setName("bob");
-    accountService.insert(newAccount);
+Account newAccount = new Account();
+newAccount.setName("bob");
+accountService.insert(newAccount);
 ```
 然后我们再看删除功能。先在<i>account.xml</i>中增加以下内容：
 ```
@@ -206,6 +206,7 @@ Account account = accountService.selectOne(condition);
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id" />
 	<update id="update" />
 	<update id="updatePersistent" />
+	<delete id="delete" />
 	<resultMap id="result" type="Role" autoMapping="true">
         <id property="id" column="role_id" />
     </resultMap>
@@ -269,6 +270,7 @@ private Role role;
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id" />
 	<update id="update" />
 	<update id="updatePersistent" />
+	<delete id="delete" />
 	<resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
 	    <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" />
@@ -531,8 +533,10 @@ Collection<Account> collectionX = accountService.selectAll(coditionX);
 ```
 因为 limiter 和 sorter 也是以条件对象的方式定义，所以可以和复杂查询一起使用，只要在条件对象中既包含条件标注又包含 Limitable 和 Sortable 类型的变量即可。
 ## pagination
-在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在flying中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是flying自动获取的，您只需执行下面这样的代码即可：
+在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在flying中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是 flying 自动获取的，您只需执行下面这样的代码即可：
 ```
+import indi.mybatis.flying.pagination.Page;
+
 AccountCondition condition = new AccountCondition();
 condition.setLimiter(new PageParam(0, 10));
 Collection<Account> collection = accountService.selectAll(condition);
@@ -542,3 +546,27 @@ Page<Account> page = new Page<>(collection, condition.getLimiter());
 ```
 假设总的数据有 21 条，则 page.getTotalCount() 为 21，pagegetMaxPageNum() 为 3，page.getPageNo() 为 1，page.getPageItems() 为第一到第十条数据的集合。
 ## optimistic lock
+乐观锁是实际应用的数据库设计中重要的一环，而 flying 对此有良好的支持。
+目前 flying 只支持版本号型乐观锁。在 flying 中使用乐观锁的方法如下：
+首先在数据结构中增加一个表示乐观锁的 integer 型字段 opLock
+```
+@FieldMapperAnnotation(dbFieldName = "opLock", jdbcType = JdbcType.INTEGER, opLockType = OpLockType.Version)
+	private Integer opLock;
+/*乐观锁可以增加 getter 方法，不建议增加 setter 方法*/
+```
+以上实际上是给 `@FieldMapperAnnotation` 中的 `opLockType` 上赋予了 `OpLockType.Version` ，这样 flying 就会明白这是一个起乐观锁作用的字段。当含有乐观锁的表 account 更新时，实际 sql 会变为：
+```
+update account ... and opLock = opLock + 1 where id = '${id}' and opLock = '${opLock}'
+```
+（上面 ... 中的内容是给其它的字段赋值）
+每次更新时都会加入 opLock 的判断，并且更新数据时 opLock 自增 1 ，这样就可以保证多个线程对同一个 account 执行 update 或 updatePersistent 时只有一个能执行成功，即达到了我们需要的锁效果。
+当含有乐观锁的表 account 删除时，实际 sql 会变为：
+```
+delete from account where id = '${id}' and opLock = '${opLock}'
+```
+即只有 opLock 和 id 都符合时才能被删除，这里乐观锁起到了保护数据的作用。
+
+在实际应用中，可以借助 update 、updatePersistent 、delete 方法的返回值来判断是否变动了数据（一般来说返回 0 表示没变动，1 表示有变动），继而判断锁是否有效，是否合法（符合业务逻辑），最后决定整个事务是提交还是回滚。
+
+最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select 、selectAll 、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
+## 其它
