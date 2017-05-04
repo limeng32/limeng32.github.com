@@ -378,7 +378,23 @@ public class AccountCondition extends Account implements Conditionable {
 	//用作 address 是否为 null 的判断（类型只能为Boolean）
 	private Boolean addressIsNull;
 	
-	//相关的getter和setter方法请自行补充
+	/*相关的getter和setter方法请自行补充*/
+	
+	/*以下四个方法是实现 Conditionable 接口后必须要定义的方法，我们这里只写出默认实现，在下一节中我们会详细介绍它们*/
+	@Override
+	public Limitable getLimiter() {
+		return null;
+	}
+	@Override
+	public void setLimiter(Limitable limiter) {
+	}
+	@Override
+	public Sortable getSorter() {
+		return null;
+	}
+	@Override
+	public void setSorter(Sortable sorter) {
+	}
 }
 ```
 以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在flying中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。之后我们可以进行测试：
@@ -473,7 +489,7 @@ public class AccountCondition extends Account implements Conditionable {
 	}
 }
 ```
-以上 limiter 和 sorter 变量名并非固定，只要类引入了 Limitable 和 Sortable 接口并实现相关方法，且在相关方法中对应上您定义的 limiter 和 sorter 即可。
+以上 limiter 和 sorter 变量名并非固定，只要类引入了 Conditionable 接口并实现相关方法，且在相关方法中对应上您定义的 limiter 和 sorter 即可。
 然后可以采用如下代码进行测试：
 ```
 import indi.mybatis.flying.models.Conditionable;
@@ -505,4 +521,13 @@ AccountCondition condition4 = new AccountCondition();
 /*在new SortParam()中可以接受不定数量的 Order 参数，因此我们先新建一个 name 正序，再新建一个 address 倒序*/
 condition4.setSorter(new SortParam(new Order("name", Conditionable.Sequence.asc),new Order("address", Conditionable.Sequence.desc)));
 Collection<Account> collection4 = accountService.selectAll(codition4);
+
+/*最后我们查询在 name 正序排序下的第 11 到 20 条数据*/
+AccountCondition conditionX = new AccountCondition();
+conditionX.setSorter(new SortParam(new Order("name", Conditionable.Sequence.asc)));
+conditionX.setLimiter(new PageParam(1, 10));
+Collection<Account> collectionX = accountService.selectAll(coditionX);
+/*这个用例说明 limiter 和 sorter 是可以组合使用的*/
 ```
+因为 limiter 和 sorter 也是以条件对象的方式定义，所以可以和复杂查询一起使用，只要在条件对象中既包含条件标注又包含 Limitable 和 Sortable 类型的变量即可。
+## pagination
