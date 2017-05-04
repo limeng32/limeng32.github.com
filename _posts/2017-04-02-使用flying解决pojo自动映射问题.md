@@ -531,3 +531,14 @@ Collection<Account> collectionX = accountService.selectAll(coditionX);
 ```
 因为 limiter 和 sorter 也是以条件对象的方式定义，所以可以和复杂查询一起使用，只要在条件对象中既包含条件标注又包含 Limitable 和 Sortable 类型的变量即可。
 ## pagination
+在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在flying中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是flying自动获取的，您只需执行下面这样的代码即可：
+```
+AccountCondition condition = new AccountCondition();
+condition.setLimiter(new PageParam(0, 10));
+Collection<Account> collection = accountService.selectAll(condition);
+/*下面这句代码就将查询结果封装为了 Page<?> 对象*/
+Page<Account> page = new Page<>(collection, condition.getLimiter());
+/*需要注意的是上面的入参 condition.getLimiter() 是不能用其它 PageParam 对象代替的，因为在之前执行 selectAll 时会将一些信息保存到 condition.getLimiter() 中*/
+```
+假设总的数据有 21 条，则 page.getTotalCount() 为 21，pagegetMaxPageNum() 为 3，page.getPageNo() 为 1，page.getPageItems() 为第一到第十条数据的集合。
+## optimistic lock
