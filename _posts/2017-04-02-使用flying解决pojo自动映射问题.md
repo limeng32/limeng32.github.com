@@ -571,8 +571,46 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select 、selectAll 、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
 ## 其它
 ### 忽略选择
-有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的例子是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以使用以下代码：
+有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的例子是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
 ```
 @FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoredSelect = true)
-	private String password;
+private String password;
+/*相关的getter和setter方法请自行补充*/
 ```
+这样在查询 account 表时就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
+```
+/*查找 name 为 "user" 且 password 为 "123456" 的一个账户*/
+Account condition = new Account();
+condition.setName("user");
+condition.setPassword("123456");
+Account account = accountService.selectOne(condition);
+/*用以上方式是可以查出 passeord 为 "123456" 的账户的，然而结果中 account.getPassword()为 null*/
+
+/* 但是仍然可以更新 password 的值 */
+account.setPassword("654321");
+accountService.update(account);
+/*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
+```
+### 复数外键
+有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id ，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
+```
+<association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
+```
+然后在 Account.java 中还需要加入以下代码：
+```
+@FieldMapperAnnotation(dbFieldName = "fk_second_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
+private Role secondRole;   
+/*相关的getter和setter方法请自行补充*/
+```
+如此一来表 account 和表 role 就构成了复数外键关系。flying 支持复数外键，您可以像操作普通外键一样操作它，代码如下：
+```
+/*查询角色名称为 "user",同时兼职角色名称为 "super_user"的账户*/
+Account condition = new Account();
+Role role = new Role(), secondRole = new Role();
+role.setName("user");
+condition.setRole(role);
+secondRole.setName("super_user");
+condition.setSecondRole(secondRole);
+Collection<Account> accounts = accountService.selectAll(condition);
+```
+可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
