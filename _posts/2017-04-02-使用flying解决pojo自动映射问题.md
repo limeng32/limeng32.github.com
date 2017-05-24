@@ -89,86 +89,86 @@ Account account = accountService.selectOne(accountCondition);
 与以往的方式相比，这种方式是不是变得优雅了很多？关于 select 和 selectOne 之间的区别，我们在后面的章节会讲到。
 
 ## insert & delete
-在最基本的select之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
+在最基本的 select 之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
 ```
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
 ```
-上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
+上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
 
-同样在<i>AccountMapper.java</i>中我们需要加入
+同样在 AccountMapper.java 中我们需要加入
 ```
 public void insert(Account t);
 ```
-就可以了。例如使用以下代码，可以增加1条name为<i>bob</i>的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
+就可以了。例如使用以下代码，可以增加 1 条 name 为 bob 的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
 ```
 Account newAccount = new Account();
 newAccount.setName("bob");
 accountService.insert(newAccount);
 ```
-然后我们再看删除功能。先在<i>account.xml</i>中增加以下内容：
+然后我们再看删除功能。先在 account.xml 中增加以下内容：
 ```
 <delete id="delete" />
 ```
-然后在<i>AccountMapper.java</i>中加入
+然后在 `AccountMapper.java` 中加入
 ```
 public int delete(Account t);
 ```
-就可以了。例如使用以下代码，可以删掉id与<i>accountToDelete</i>的id一致的数据。
+就可以了。例如使用以下代码，可以删掉 id 与 accountToDelete 的 id 一致的数据。
 ```
 accountService.delete(accountToDelete);
 ```
-delete方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过判断delete方法的返回值来实现更复杂的事务逻辑。
+delete 方法的返回值代表执行 sql 后产生影响的条数，一般来说，返回值为 0 表示 sql 执行后没有效果，返回值为 1 表示 sql 执行成功，在代码中可以通过判断 delete 方法的返回值来实现更复杂的事务逻辑。
 
 ## update & updatePersistent
-接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和updatePersistent（完全更新）。首先，在<i>account.xml</i>中增加以下内容：
+接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和 updatePersistent（完全更新）。首先，在 `account.xml` 中增加以下内容：
 ```
 <update id="update" />
 <update id="updatePersistent" />
 ```
-上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
+上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
 
-然后在<i>AccountMapper.java</i>中加入
+然后在 `AccountMapper.java` 中加入
 ```
 public int update(Account t);
 public int updatePersistent(Account t);
 ```
-就可以了。例如使用以下代码，可以将<i>accountToUpdate</i>的name更新为duke。
+就可以了。例如使用以下代码，可以将 accountToUpdate 的 name 更新为“duke”。
 ```
 accountToUpdate.setName("duke");
 accountService.update(accountToUpdate);
 ```
-update和updatePersistent方法的返回值代表执行sql后产生影响的条数，一般来说，返回值为0表示sql执行后没有效果，返回值为1表示sql执行成功，在代码中可以通过判断update和updatePersistent方法的返回值来实现更复杂的事务逻辑。
+update 和 updatePersistent 方法的返回值代表执行 sql 后产生影响的条数，一般来说，返回值为 0 表示 sql 执行后没有效果，返回值为 1 表示 sql 执行成功，在代码中可以通过判断 update 和 updatePersistent 方法的返回值来实现更复杂的事务逻辑。
 
-下面我们来说明update和updatePersistent和关系。如果我们执行
+下面我们来说明 update 和 updatePersistent 和关系。如果我们执行
 ```
 accountToUpdate.setName(null);
 accountService.update(accountToUpdate);
 ```
-实际上数据库中这条数据的name字段不会改变，因为flying对为null的属性有保护措施。这在大多数情况下都是方便的，但如果我们真的需要在数据库中将这条数据的name字段设为null，updatePersistent就派上了用场。我们可以执行
+实际上数据库中这条数据的 name 字段不会改变，因为 flying 对为 null 的属性有保护措施。这在大多数情况下都是方便的，但如果我们真的需要在数据库中将这条数据的 name 字段设为 null，updatePersistent 就派上了用场。我们可以执行
 ```
 accountToUpdate.setName(null);
 accountService.updatePersistent(accountToUpdate);
 ```
-这样数据库中这条数据的name字段就会变为null。可见`updatePersistent`会把pojo中所有的属性都更新到数据库中，而`update`只更新不为null的属性。在实际使用`updatePersistent`时，需要特别小心慎重，因为您的pojo中当时为null的属性有可能比您想象的多。
+这样数据库中这条数据的 name 字段就会变为 null。可见 updatePersistent 会把 pojo 中所有的属性都更新到数据库中，而 update 只更新不为 null 的属性。在实际使用 updatePersistent 时，您需要特别小心慎重，因为当时 pojo 中为 null 的属性有可能比您想象的多。
 
 ## selectAll & count
-在之前学习select和selectOne时，细心的您可能已经发现，这两个方法要完成的工作似乎是相同的。的确select和selectOne都返回<b>1</b>个绑定了数据的pojo，但它们接受的参数不同：select接受主键参数；selectOne接受pojo参数，这个pojo中的所有被`@FieldMapperAnnotation`标记过的属性都会作为“相等”条件传递到sql语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即selectAll方法与count方法，这个时候以pojo作为入参最为合适。为了更清晰的讲述，我们先给给<i>Account.java</i>再增加一个属性address：
+在之前学习 select 和 selectOne 时，细心的您可能已经发现，这两个方法要完成的工作似乎是相同的。的确 select 和 selectOne 都返回 1 个绑定了数据的 pojo，但它们接受的参数不同：select 接受主键参数；selectOne 接受 pojo 参数，这个 pojo 中的所有被 `@FieldMapperAnnotation` 标记过的属性都会作为“相等”条件传递到 sql 语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即 selectAll 方法与 count 方法，这个时候以 pojo 作为入参最为合适。为了更清晰的讲述，我们先给 `Account.java` 再增加一个属性 address：
 ```
 @FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
 private java.lang.String address;
 /*相关的getter和setter方法请自行补充*/
 ```
-然后我们在<i>account.xml</i>中增加以下内容：
+然后我们在 `account.xml` 中增加以下内容：
 ```
 <select id="selectAll" resultMap="result">#{cacheKey}</select>
 <select id="count" resultType="int">#{cacheKey}</select>
 ```
-再在<i>AccountMapper.java</i>中加入
+再在 `AccountMapper.java` 中加入
 ```
 public Collection<Account> selectAll(Account t);
 public int count(Account t);
 ```
-就可以了。例如使用以下代码，可以查询所有address为“beijing”的数据和数量：
+就可以了。例如使用以下代码，可以查询所有 address 为“beijing”的数据和数量：
 ```
 Account condition = new Account();
 condition.setAddress("beijing");
