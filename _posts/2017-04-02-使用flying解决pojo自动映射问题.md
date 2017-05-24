@@ -6,7 +6,7 @@ category: blog
 ---
 
 ## Hello World
-上一篇文章中我们介绍了flying的基本情况，在展示第一个demo之前还需要做一些额外的工作，即描述你想让mybatis托管的数据的表结构。
+上一篇文章中我们介绍了flying的基本情况，在展示第一个demo之前还需要做一些额外的工作，即描述您想让mybatis管理的数据的表结构。
 
 无论是否使用flying插件，对于每一个由mybatis托管的表，都要有一个<i>pojo_mapper.xml</i>来告诉mybatis这个表的基本信息。在以往这个配置文件可能会因为sql片段而变得非常复杂，但加入flying插件后，这个配置文件中将不需要sql片段，变得精简而统一。下面是一个有代表性的配置文件account.xml：
 ``` 
@@ -23,7 +23,7 @@ category: blog
 ``` 
 在以上配置文件中，我们描述了一个接口<i>myPackage.AccountMapper</i>，一个方法<i>select</i>，一个方法<i>selectOne</i>，一个对象实体<i>Account</i>，以及表结构<i>resultMap</i>。在<i>resultMap</i>中由于设置了`autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段mybatis会自动感知。
 
-<i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果你有使用mybatis的经验你就能猜到，<i>AccountMapper.java</i>中的内容是：
+<i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果您有使用mybatis的经验您就能猜到，<i>AccountMapper.java</i>中的内容是：
 ```
 package myPackage;
 public interface AccountMapper {
@@ -31,7 +31,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用flying时一模一样，你可能唯一奇怪的一点就是account.xml中的select方法描述中的<i>#{id}</i>，selectOne方法描述中的<i>#{cacheKey}</i>，以及具体的sql在哪里。不要急，马上在对象实体<i>Account</i>中我们就会认识到flying的存在。<i>Account.java</i>的代码如下：
+到目前为止一切都和不使用flying时一模一样，您可能唯一奇怪的一点就是account.xml中的select方法描述中的<i>#{id}</i>，selectOne方法描述中的<i>#{cacheKey}</i>，以及具体的sql在哪里。不要急，马上在对象实体<i>Account</i>中我们就会认识到flying的存在。<i>Account.java</i>的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -93,7 +93,7 @@ Account account = accountService.selectOne(accountCondition);
 ```
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
 ```
-上面的`useGeneratedKeys="true"`表示主键自增，如果你不使用主键自增策略此处可以省略，上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
+上面的`useGeneratedKeys="true"`表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
 
 同样在<i>AccountMapper.java</i>中我们需要加入
 ```
@@ -149,14 +149,14 @@ accountService.update(accountToUpdate);
 accountToUpdate.setName(null);
 accountService.updatePersistent(accountToUpdate);
 ```
-这样数据库中这条数据的name字段就会变为null。可见`updatePersistent`会把pojo中所有的属性都更新到数据库中，而`update`只更新不为null的属性。在实际使用`updatePersistent`时，需要特别小心慎重，因为你的pojo中当时为null的属性有可能比你想象的多。
+这样数据库中这条数据的name字段就会变为null。可见`updatePersistent`会把pojo中所有的属性都更新到数据库中，而`update`只更新不为null的属性。在实际使用`updatePersistent`时，需要特别小心慎重，因为您的pojo中当时为null的属性有可能比您想象的多。
 
 ## selectAll & count
-在之前学习select和selectOne时，细心的你可能已经发现，这两个方法要完成的工作似乎是相同的。的确select和selectOne都返回<b>1</b>个绑定了数据的pojo，但它们接受的参数不同：select接受主键参数；selectOne接受pojo参数，这个pojo中的所有被`@FieldMapperAnnotation`标记过的属性都会作为“相等”条件传递到sql语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即selectAll方法与count方法，这个时候以pojo作为入参最为合适。为了更清晰的讲述，我们先给给<i>Account.java</i>再增加一个属性address：
+在之前学习select和selectOne时，细心的您可能已经发现，这两个方法要完成的工作似乎是相同的。的确select和selectOne都返回<b>1</b>个绑定了数据的pojo，但它们接受的参数不同：select接受主键参数；selectOne接受pojo参数，这个pojo中的所有被`@FieldMapperAnnotation`标记过的属性都会作为“相等”条件传递到sql语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即selectAll方法与count方法，这个时候以pojo作为入参最为合适。为了更清晰的讲述，我们先给给<i>Account.java</i>再增加一个属性address：
 ```
 @FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
 private java.lang.String address;
-//相关的getter和setter方法请自行补充
+/*相关的getter和setter方法请自行补充*/
 ```
 然后我们在<i>account.xml</i>中增加以下内容：
 ```
@@ -188,7 +188,7 @@ Collection<Account> accountCollection = accountService.selectAll(condition);
 ```
 Account account = accountService.selectOne(condition);
 ```
-由此可见selectOne可以称作是selectAll的特殊形式，它只会返回一个pojo而不是pojo的集合。如果确实有多条数据符合给定的codition，也只会返回查询结果中排在最前面的数据，这一点用户在使用selectOne时需要了解。无论如何，在合适的地方使用selectOne代替selectAll，会让你的程序获得极大便利。
+由此可见selectOne可以称作是selectAll的特殊形式，它只会返回一个pojo而不是pojo的集合。如果确实有多条数据符合给定的codition，也只会返回查询结果中排在最前面的数据，这一点用户在使用selectOne时需要了解。无论如何，在合适的地方使用selectOne代替selectAll，会让您的程序获得极大便利。
 
 ## foreign key
 一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而flying完全就是为此而生。
@@ -240,14 +240,14 @@ public class Role {
 	    
 	@FieldMapperAnnotation(dbFieldName = "role_name", jdbcType = JdbcType.VARCHAR)
 	private String roleName;
-	//相关的getter和setter方法请自行补充
+	/*相关的getter和setter方法请自行补充*/
 }
 ```
 然后在<i>Account.java</i>中，加入以下内容：
 ```   
 @FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
 private Role role;   
-//相关的getter和setter方法请自行补充
+/*相关的getter和setter方法请自行补充*/
 ```
 以上代码中，<b>dbFieldName</b>的值为数据库表account中指向表role的外键名，<b>jdbcType</b>的值为这个外键的类型，<b>dbAssociationUniqueKey</b>的值为此外键对应的另一表的主键的名称，写出以上信息后，flying在代码层面已经完全理解了数据结构。
 
@@ -290,9 +290,9 @@ private Role role;
 我们使用这个数据集进行测试，当我们输入以下代码时：
 ```
 Account account1 = accountService.select(1);
-//此时account1的role属性也已经加载了真实数据
+/*此时account1的role属性也已经加载了真实数据*/
 Role role1 = account1.getRole();
-//role1.getId()为10，role1.getRoleName()为"user"
+/*role1.getId()为10，role1.getRoleName()为"user"*/
 ```
 这种传递是可以迭代的，即如果Role自己也有父对象，则Role的父对象也会一并加载，只要它的代码和配置正确。
 
@@ -303,37 +303,37 @@ roleCondition.setRoleName("super_user");
 Account accountCondition = new Account();
 accountCondition.setRole(roleCondition);
 Collection<Account> accounts = accountService.selectAll(accountCondition);
-//accounts.seiz()为2，里面包含的对象的account_id是2和3
+/*accounts.seiz()为2，里面包含的对象的account_id是2和3*/
 
-//我们再给入参pojo加一个address限制
+/*我们再给入参pojo加一个address限制*/
 accountCondition.setAddress("beijing");
 Collection<Account> accounts2 = accountService.selectAll(accountCondition);
-//accounts.size()为1，里面包含的对象的account_id是3，这说明account的条件和父对象role的条件同时都生效了
+/*accounts.size()为1，里面包含的对象的account_id是3，这说明account的条件和父对象role的条件同时都生效了*/
 ```
 这个特性在`selectOne`、`count`中同样存在
 
 最后，父对象同样可以参与子对象的`insert`、`update`、`updatePersistent`，代码如下：
 ```
 Account newAccount = new Account();
-//我们新建一个姓名为iris，角色名称为"user"的账号
+/*我们新建一个姓名为iris，角色名称为"user"的账号*/
 newAccount.setName("iris");
 Role role1 = roleService.select(10);
-//角色名称为"user"的数据的role_id是10，现在role1已经加载了它
-newAccount.setRole(role1);
+/*角色名称为"user"的数据的role_id是10，现在role1已经加载了它
+newAccount.setRole(role1);*/
 accountService.insert(newAccount);
 /*一个姓名为iris，角色名称为"user"的账号建立完成*/
 
-//我们用update方法将iris的角色变为"super_user"
+/*我们用update方法将iris的角色变为"super_user"*/
 Role role2 = roleService.select(11);
-//角色名称为"super_user"的数据的role_id是11，现在role1已经加载了它
+/*角色名称为"super_user"的数据的role_id是11，现在role1已经加载了它*/
 newAccount.setRole(role2);
 accountService.update(newAccount);
-//现在newAccount.getRole().getId()为11，newAccount.getRole().getRoleName为"super_user"
+/*现在newAccount.getRole().getId()为11，newAccount.getRole().getRoleName为"super_user"*/
 
-//我们用updatePersistent方法将iris的角色变为null，即不再关联
+/*我们用updatePersistent方法将iris的角色变为null，即不再关联*/
 newAccount.setRole(null);
 accountService.updatePersistent(newAccount);
-//现在newAccount.getRole()为null，在数据库中也不再有关联，注意在这里update方法起不到这种效果
+/*现在newAccount.getRole()为null，在数据库中也不再有关联，注意在这里update方法起不到这种效果*/
 ```
 
 ## complex condition
@@ -349,35 +349,35 @@ import indi.mybatis.flying.statics.ConditionType;
 @QueryMapperAnnotation(tableName = "account")
 public class AccountCondition extends Account implements Conditionable {
         @ConditionMapperAnnotation(dbFieldName = "name", conditionType = ConditionType.Like)
-        //用作 name 全匹配的值
+        /*用作 name 全匹配的值*/
 	private String nameLike;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.HeadLike)
-	//用作 address 开头匹配的值
+	/*用作 address 开头匹配的值*/
 	private String addressHeadLike;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.TailLike)
-	//用作 address 结尾匹配的值
+	/*用作 address 结尾匹配的值*/
 	private String addressTailLike;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeAND)
-	//用作 address 需要同时匹配的若干个值的集合（类型只能为List）
+	/*用作 address 需要同时匹配的若干个值的集合（类型只能为List）*/
 	private List<String> addressMultiLikeAND;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeOR)
-	//用作 address 需要至少匹配之一的若干个值的集合（类型只能为List）
+	/*用作 address*/ 需要至少匹配之一的若干个值的集合（类型只能为List）
 	private List<String> addressMultiLikeOR;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.In)
-	//用作 address 可能等于的若干个值的集合（类型可为任意Collection）
+	/*用作 address*/ 可能等于的若干个值的集合（类型可为任意Collection）
 	private Collection<String> addressIn;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NotIn)
-	//用作 address 不可能等于的若干个值的集合（类型可为任意Collection）
+	/*用作 address*/ 不可能等于的若干个值的集合（类型可为任意Collection）
 	private Collection<String> addressNotIn;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NullOrNot)
-	//用作 address 是否为 null 的判断（类型只能为Boolean）
+	/*用作 address 是否为 null 的判断（类型只能为Boolean）*/
 	private Boolean addressIsNull;
 	
 	/*相关的getter和setter方法请自行补充*/
