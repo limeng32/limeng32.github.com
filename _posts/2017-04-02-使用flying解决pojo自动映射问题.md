@@ -132,7 +132,7 @@ delete 方法的返回值代表执行 sql 后产生影响的条数，一般来�
 public int update(Account t);
 public int updatePersistent(Account t);
 ```
-就可以了。例如使用以下代码，可以将 accountToUpdate 的 name 更新为“duke”。
+就可以了。例如使用以下代码，可以将 accountToUpdate 的 name 更新为 “duke” 。
 ```
 accountToUpdate.setName("duke");
 accountService.update(accountToUpdate);
@@ -168,27 +168,27 @@ private java.lang.String address;
 public Collection<Account> selectAll(Account t);
 public int count(Account t);
 ```
-就可以了。例如使用以下代码，可以查询所有 address 为“beijing”的数据和数量：
+就可以了。例如使用以下代码，可以查询所有 address 为 “beijing” 的数据和数量：
 ```
 Account condition = new Account();
 condition.setAddress("beijing");
 Collection<Account> accountCollection = accountService.selectAll(condition);
 int accountNumber = accountService.count(condition);
 ```
-（当然一般来说执行selectAll后就不需要执行count了，我们取结果集的size即可，但如果我们只关心数量不关心具体数据集时，执行count比执行selectAll更节省时间）
+（当然一般来说执行 selectAll 后就不需要执行 count 了，我们取结果集的 size 即可，但如果我们只关心数量不关心具体数据集时，执行 count 比执行 selectAll 更节省时间）
 
-如果我们想查询所有address为“shanghai”<b>同时</b>name为“ella”的账户，则执行以下代码：
+如果我们想查询所有 address 为 “shanghai” 同时 name 为 “ella” 的账户，则执行以下代码：
 ```
 Account condition = new Account();
 condition.setAddress("shanghai");
 condition.setName("ella");
 Collection<Account> accountCollection = accountService.selectAll(condition);
 ```
-如果我们知道 address 为 "shanghai" <b>同时</b> name 为 "ella" 的账户只有一个，并想直接返回这个数据绑定的 pojo，可以执行： 
+如果我们知道 address 为 "shanghai" 同时  name 为 "ella" 的账户只有一个，并想直接返回这个数据绑定的 pojo，可以执行： 
 ```
 Account account = accountService.selectOne(condition);
 ```
-由此可见selectOne可以称作是selectAll的特殊形式，它只会返回一个pojo而不是pojo的集合。如果确实有多条数据符合给定的codition，也只会返回查询结果中排在最前面的数据，这一点用户在使用selectOne时需要了解。无论如何，在合适的地方使用selectOne代替selectAll，会让您的程序获得极大便利。
+由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果确实有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据，这一点用户在使用 selectOne 时需要了解。无论如何，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大便利。
 
 ## foreign key
 一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而flying完全就是为此而生。
