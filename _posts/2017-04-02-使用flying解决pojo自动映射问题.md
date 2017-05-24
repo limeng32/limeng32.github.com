@@ -8,7 +8,7 @@ category: blog
 ## Hello World
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
-无论是否使用flying插件，对于每一个由mybatis托管的表，都要有一个<i>pojo_mapper.xml</i>来告诉mybatis这个表的基本信息。在以往这个配置文件可能会因为sql片段而变得非常复杂，但加入flying插件后，这个配置文件中将不需要sql片段，变得精简而统一。下面是一个有代表性的配置文件account.xml：
+无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 pojo_mapper.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是一个有代表性的配置文件 account.xml ：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -21,7 +21,7 @@ category: blog
     </resultMap>
 </mapper>
 ``` 
-在以上配置文件中，我们描述了一个接口<i>myPackage.AccountMapper</i>，一个方法<i>select</i>，一个方法<i>selectOne</i>，一个对象实体<i>Account</i>，以及表结构<i>resultMap</i>。在<i>resultMap</i>中由于设置了`autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段mybatis会自动感知。
+在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper ，一个方法 select ，一个方法 selectOne ，一个对象实体 Account ，以及表结构 resultMap 。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段 mybatis 会自动感知。
 
 <i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果您有使用mybatis的经验您就能猜到，<i>AccountMapper.java</i>中的内容是：
 ```
