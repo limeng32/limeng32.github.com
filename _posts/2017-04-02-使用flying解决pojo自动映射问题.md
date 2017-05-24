@@ -23,7 +23,7 @@ category: blog
 ``` 
 在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper ，一个方法 select ，一个方法 selectOne ，一个对象实体 Account ，以及表结构 resultMap 。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段 mybatis 会自动感知。
 
-<i>myPackage.AccountMapper</i>接口是mybatis本身需要的，里面的内容和此配置文件中定义的方法相对应。如果您有使用mybatis的经验您就能猜到，<i>AccountMapper.java</i>中的内容是：
+myPackage.AccountMapper 接口是 mybatis 本身需要的，里面的内容和此配置文件中定义的方法相对应。如果您有使用 mybatis 的经验您就能立刻想到， AccountMapper.java 中的内容是：
 ```
 package myPackage;
 public interface AccountMapper {
@@ -31,7 +31,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用flying时一模一样，您可能唯一奇怪的一点就是account.xml中的select方法描述中的<i>#{id}</i>，selectOne方法描述中的<i>#{cacheKey}</i>，以及具体的sql在哪里。不要急，马上在对象实体<i>Account</i>中我们就会认识到flying的存在。<i>Account.java</i>的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能唯一奇怪的一点就是 account.xml 中的 select 方法描述中的 #{id} ，selectOne 方法描述中的 #{cacheKey}，以及具体的 sql 在哪里。不要急，马上在对象实体 Account 中我们就会见识到 flying 的存在。 Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -60,7 +60,7 @@ public class Account {
     }
 }
 ```    
-可见，和普通的pojo相比，<i>Account.java</i>只是多了以下3行注解而已：
+可见，和普通的 pojo 相比， Account.java 只是多了以下3行注解而已：
 ```
     @TableMapperAnnotation(tableName = "account")
     @FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
@@ -68,32 +68,32 @@ public class Account {
 ```
 下面我们分别来解释它们的含义。
 
-第1行@TableMapperAnnotation只能放在类定义之上，它声明这个类是一个表，它的属性tableName描述了这个表在数据库中的名字。
+第1行 `@TableMapperAnnotation` 只能放在类定义之上，它声明这个类是一个表，它的属性 tableName 描述了这个表在数据库中的名字。
 
-第2行@FieldMapperAnnotation只能放在变量定义之上，它声明这个变量是一个字段，它的属性dbFieldName描述了在数据库中这个字段的名称，属性jdbcType描述了在数据库中这个字段的类型，属性isUniqueKey为true描述了这个字段是主键。
+第2行 `@FieldMapperAnnotation` 只能放在变量定义之上，它声明这个变量是一个字段，它的属性 `dbFieldName` 描述了在数据库中这个字段的名称，属性 `jdbcType` 描述了在数据库中这个字段的类型，属性 `isUniqueKey = true` 描述了这个字段是主键。
 
-第3行@FieldMapperAnnotation与第二行相同，它描述了另一个字段name，值得注意的是这个字段的类型是VARCHAR并且不是主键。
+第3行 `@FieldMapperAnnotation` 与第二行相同，它描述了另一个字段 name，值得注意的是这个字段的类型是 VARCHAR 并且不是主键。
 
-以上3个注解直白的描述了表account的数据结构，然后我们就可以使用<i>AccountService</i>非常方便的操纵数据库的读取了。（<i>AccountService</i>是<i>AccountMapper</i>的实现类，单独使用或在spring中使用都有多种方法进行配置，本文档不对此进行赘述）
+以上 3 个注解直白的描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，本文档不对此进行累述）
 
-使用以下代码，可以查询id为1的账户：
+使用以下代码，可以查询 id 为 1 的账户：
 ```
 Account account = accountService.select(1);
 ```     
-使用以下代码，可以查询name为andy的<b>1</b>条账户数据：
+使用以下代码，可以查询 name 为 andy 的 1 条账户数据：
 ```
 Account accountCondition = new Account();
 accountCondition.setName("andy");
 Account account = accountService.selectOne(accountCondition);
 ```
-与以往的方式相比，这种方式是不是变得优雅了很多？关于select和selectOne之间的区别，我们在后面的章节会讲到。
+与以往的方式相比，这种方式是不是变得优雅了很多？关于 select 和 selectOne 之间的区别，我们在后面的章节会讲到。
 
 ## insert & delete
-在最基本的select之后，我们再看新增功能。但在此之前，需要先在<i>account.xml</i>中增加以下内容：
+在最基本的select之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
 ```
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
 ```
-上面的`useGeneratedKeys="true"`表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
+上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般mybatis映射文件的区别在于没有具体sql语句。
 
 同样在<i>AccountMapper.java</i>中我们需要加入
 ```
