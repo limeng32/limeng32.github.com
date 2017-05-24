@@ -1,12 +1,12 @@
 ---
 layout: post
-title: 使用flying解决pojo自动映射问题
-description: 本节内容向您讲解如何使用AutoMapperInterceptor拦截器来实现pojo的自动映射。
+title: 使用 flying 解决 pojo 自动映射问题
+description: 本节内容向您讲解如何使用 AutoMapperInterceptor 拦截器来实现pojo的自动映射。
 category: blog
 ---
 
 ## Hello World
-上一篇文章中我们介绍了flying的基本情况，在展示第一个demo之前还需要做一些额外的工作，即描述您想让mybatis管理的数据的表结构。
+上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
 无论是否使用flying插件，对于每一个由mybatis托管的表，都要有一个<i>pojo_mapper.xml</i>来告诉mybatis这个表的基本信息。在以往这个配置文件可能会因为sql片段而变得非常复杂，但加入flying插件后，这个配置文件中将不需要sql片段，变得精简而统一。下面是一个有代表性的配置文件account.xml：
 ``` 
