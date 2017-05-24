@@ -191,9 +191,9 @@ Account account = accountService.selectOne(condition);
 由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果确实有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据，这一点用户在使用 selectOne 时需要了解。无论如何，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大便利。
 
 ## foreign key
-一般来说我们的pojo都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而flying完全就是为此而生。
+一般来说我们的 pojo 都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而 flying 完全就是为此而生。
 
-首先我们定义一个新的pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建<i>role.xml</i>、<i>RoleMapper.java</i>以及<i>Role.java</i>。<i>role.xml</i>如下：
+首先我们定义一个新的 pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建 `role.xml`、`RoleMapper.java` 以及 `Role.java`。`role.xml` 如下：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -212,7 +212,7 @@ Account account = accountService.selectOne(condition);
     </resultMap>
 </mapper>
 ```
- <i>RoleMapper.java</i>如下：
+`RoleMapper.java` 如下：
 ``` 
 package myPackage;
 public interface RoleMapper {
@@ -226,7 +226,7 @@ public interface RoleMapper {
 	public int count(Role t);
 }
 ```
-<i>Role.java</i>如下：
+`Role.java` 如下：
 ```  
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -243,21 +243,21 @@ public class Role {
 	/*相关的getter和setter方法请自行补充*/
 }
 ```
-然后在<i>Account.java</i>中，加入以下内容：
+然后在 `Account.java` 中，加入以下内容：
 ```   
 @FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
 private Role role;   
 /*相关的getter和setter方法请自行补充*/
 ```
-以上代码中，<b>dbFieldName</b>的值为数据库表account中指向表role的外键名，<b>jdbcType</b>的值为这个外键的类型，<b>dbAssociationUniqueKey</b>的值为此外键对应的另一表的主键的名称，写出以上信息后，flying在代码层面已经完全理解了数据结构。
+以上代码中，`dbFieldName` 的值为数据库表 account 中指向表 role 的外键名，`jdbcType` 的值为这个外键的类型，`dbAssociationUniqueKey` 的值为此外键对应的另一表的主键的名称，写出以上信息后，flying 在代码层面已经完全理解了数据结构。
 
-最后在<i>account.xml</i>的resultMap元素中，加入以下内容
+最后在 `account.xml` 的 `resultMap` 元素中，加入以下内容
 ```   
 <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" /> 
 ```
-写出以上信息后，flying在配置文件层面已经完全理解了数据结构。
+写出以上信息后，flying 在配置文件层面已经完全理解了数据结构。
 
-最后完整版的<i>account.xml</i>如下：
+最后完整版的 `account.xml` 如下：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -277,7 +277,7 @@ private Role role;
     </resultMap>
 </mapper>
 ```
-在写完以上代码后，我们看看flying能做到什么。首先多对一关系中的<b>一</b>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的，为了说明接下来的例子，我们先以dataset的方式定义一个数据集
+在写完以上代码后，我们看看 flying 能做到什么。首先多对一关系中的<b>一</b>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的，为了说明接下来的例子，我们先以 dataset 的方式定义一个数据集
 ```
 <dataset>
         <account account_id="1" fk_role_id="10" address="beijing" name="frank" />
@@ -294,9 +294,9 @@ Account account1 = accountService.select(1);
 Role role1 = account1.getRole();
 /*role1.getId()为10，role1.getRoleName()为"user"*/
 ```
-这种传递是可以迭代的，即如果Role自己也有父对象，则Role的父对象也会一并加载，只要它的代码和配置正确。
+这种传递是可以迭代的，即如果 Role 自己也有父对象，则 Role 的父对象也会一并加载，只要它的代码和配置正确。
 
-不仅如此，我们可以在入参pojo中加入父对象，比如下面的代码查询的是角色名为"super_user"的所有帐户：
+不仅如此，我们可以在入参 pojo 中加入父对象，比如下面的代码查询的是角色名为 “super_user” 的所有帐户：
 ```
 Role roleCondition = new Role();
 roleCondition.setRoleName("super_user");
@@ -310,9 +310,9 @@ accountCondition.setAddress("beijing");
 Collection<Account> accounts2 = accountService.selectAll(accountCondition);
 /*accounts.size()为1，里面包含的对象的account_id是3，这说明account的条件和父对象role的条件同时都生效了*/
 ```
-这个特性在`selectOne`、`count`中同样存在
+这个特性在 selectOne、count 中同样存在
 
-最后，父对象同样可以参与子对象的`insert`、`update`、`updatePersistent`，代码如下：
+最后，父对象同样可以参与子对象的 insert、update、updatePersistent，代码如下：
 ```
 Account newAccount = new Account();
 /*我们新建一个姓名为iris，角色名称为"user"的账号*/
