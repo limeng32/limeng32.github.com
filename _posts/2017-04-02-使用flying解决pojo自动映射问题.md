@@ -200,8 +200,8 @@ Account account = accountService.selectOne(condition);
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.RoleMapper">
-        <cache />
-    <select id="select" resultMap="result">#{id}</select>
+    <cache />
+<select id="select" resultMap="result">#{id}</select>
 	<select id="selectOne" resultMap="result">#{cacheKey}</select>
 	<select id="selectAll" resultMap="result">#{cacheKey}</select>
 	<select id="count" resultType="int">#{cacheKey}</select>
