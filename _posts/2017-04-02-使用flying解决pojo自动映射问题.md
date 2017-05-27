@@ -353,9 +353,10 @@ import indi.mybatis.flying.models.Conditionable;
 import indi.mybatis.flying.statics.ConditionType;
 @QueryMapperAnnotation(tableName = "account")
 public class AccountCondition extends Account implements Conditionable {
-        @ConditionMapperAnnotation(dbFieldName = "name", conditionType = ConditionType.Like)
-        /*用作 name 全匹配的值*/
-	private String nameLike;
+
+    @ConditionMapperAnnotation(dbFieldName = "name", conditionType = ConditionType.Like)
+    /*用作 name 全匹配的值*/
+    private String nameLike;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.HeadLike)
 	/*用作 address 开头匹配的值*/
