@@ -559,7 +559,7 @@ Page<Account> page = new Page<>(collection, condition.getLimiter());
 在数据结构中增加一个表示乐观锁的 Integer 型字段 opLock 即可：
 ```
 @FieldMapperAnnotation(dbFieldName = "opLock", jdbcType = JdbcType.INTEGER, opLockType = OpLockType.Version)
-    private Integer opLock;
+private Integer opLock;
 /*乐观锁可以增加 getter 方法，不建议增加 setter 方法*/
 ```
 以上实际上是给 `@FieldMapperAnnotation` 中的 `opLockType` 上赋予了 `OpLockType.Version`，这样 flying 就会明白这是一个起乐观锁作用的字段。当含有乐观锁的表 account 更新时，实际 sql 会变为：
