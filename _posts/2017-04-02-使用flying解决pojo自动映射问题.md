@@ -237,12 +237,13 @@ import indi.mybatis.flying.annotations.TableMapperAnnotation;
     
 @TableMapperAnnotation(tableName = "role")
 public class Role {
+
     @FieldMapperAnnotation(dbFieldName = "role_id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
     private Integer id;
 	    
-	@FieldMapperAnnotation(dbFieldName = "role_name", jdbcType = JdbcType.VARCHAR)
-	private String roleName;
-	/*相关的getter和setter方法请自行补充*/
+    @FieldMapperAnnotation(dbFieldName = "role_name", jdbcType = JdbcType.VARCHAR)
+    private String roleName;
+    /*相关的getter和setter方法请自行补充*/
 }
 ```
 然后在 `Account.java` 中，加入以下内容：
