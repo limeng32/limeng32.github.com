@@ -280,7 +280,7 @@ private Role role;
     </resultMap>
 </mapper>
 ```
-在写完以上代码后，我们看看 flying 能做到什么。首先多对一关系中的<b>一</b>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的，为了说明接下来的例子，我们先以 dataset 的方式定义一个数据集
+在写完以上代码后，我们看看 flying 能做到什么。首先多对一关系中的<b>一</b>（也即父对象），是可以在多对一关系中的<b>多</b>（也即子对象）查询时自动查询的。为了说明接下来的例子，我们先以 dataset 的方式定义一个数据集
 ```
 <dataset>
     <account account_id="1" fk_role_id="10" address="beijing" name="frank" />
@@ -297,7 +297,7 @@ Account account1 = accountService.select(1);
 Role role1 = account1.getRole();
 /*role1.getId()为10，role1.getRoleName()为"user"*/
 ```
-这种传递是可以迭代的，即如果 Role 自己也有父对象，则 Role 的父对象也会一并加载，只要它的代码和配置正确。
+这种传递是可以迭代的，即如果 Role 自己也有父对象，则 Role 的父对象也会一并加载，只要它的配置文件和代码正确。
 
 不仅如此，我们可以在入参 pojo 中加入父对象，比如下面的代码查询的是角色名为 “super_user” 的所有帐户：
 ```
@@ -306,37 +306,39 @@ roleCondition.setRoleName("super_user");
 Account accountCondition = new Account();
 accountCondition.setRole(roleCondition);
 Collection<Account> accounts = accountService.selectAll(accountCondition);
-/*accounts.seiz()为2，里面包含的对象的account_id是2和3*/
+/*accounts.seiz()为 2，里面包含的对象的 account_id 是 2 和 3*/
 
 /*我们再给入参pojo加一个address限制*/
 accountCondition.setAddress("beijing");
 Collection<Account> accounts2 = accountService.selectAll(accountCondition);
-/*accounts.size()为1，里面包含的对象的account_id是3，这说明account的条件和父对象role的条件同时都生效了*/
+/*accounts.size()为 1，里面包含的对象的 account_id 是 3，这说明 account 的条件和父对象 role 的条件同时都生效了*/
 ```
 这个特性在 selectOne、count 中同样存在
 
 最后，父对象同样可以参与子对象的 insert、update、updatePersistent，代码如下：
 ```
 Account newAccount = new Account();
-/*我们新建一个姓名为iris，角色名称为"user"的账号*/
+
+/*我们新建一个姓名为 iris，角色名称为 "user" 的账号*/
 newAccount.setName("iris");
+
+/*角色名称为 "user" 的数据的 role_id 是 10，由变量 role1 来加载它*/
 Role role1 = roleService.select(10);
-/*角色名称为"user"的数据的role_id是10，现在role1已经加载了它
-newAccount.setRole(role1);*/
+newAccount.setRole(role1);
 accountService.insert(newAccount);
 /*一个姓名为iris，角色名称为"user"的账号建立完成*/
 
 /*我们用update方法将iris的角色变为"super_user"*/
+/*角色名称为"super_user"的数据的role_id是11，由变量role2来加载了它*/
 Role role2 = roleService.select(11);
-/*角色名称为"super_user"的数据的role_id是11，现在role1已经加载了它*/
 newAccount.setRole(role2);
 accountService.update(newAccount);
 /*现在newAccount.getRole().getId()为11，newAccount.getRole().getRoleName为"super_user"*/
 
-/*我们用updatePersistent方法将iris的角色变为null，即不再关联*/
+/*我们用updatePersistent方法将iris的角色变为null，即与Role对象不再关联*/
 newAccount.setRole(null);
 accountService.updatePersistent(newAccount);
-/*现在newAccount.getRole()为null，在数据库中也不再有关联，注意在这里update方法起不到这种效果*/
+/*现在 newAccount.getRole()为 null，在数据库中也不再有关联（注意在这里 update 方法起不到这种效果，因为 update 会忽略 null）*/
 ```
 
 ## complex condition
