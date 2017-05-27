@@ -260,23 +260,23 @@ private Role role;
 ```
 写出以上信息后，flying 在配置文件层面已经完全理解了数据结构。
 
-最后完整版的 `account.xml` 如下：
+最后总结一下，完整版的 `account.xml` 如下：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
     <cache />
-	<select id="select" resultMap="result">#{id}</select>
-	<select id="selectOne" resultMap="result">#{cacheKey}</select>
-	<select id="selectAll" resultMap="result">#{cacheKey}</select>
-	<select id="count" resultType="int">#{cacheKey}</select>
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id" />
-	<update id="update" />
-	<update id="updatePersistent" />
-	<delete id="delete" />
-	<resultMap id="result" type="Account" autoMapping="true">
+    <select id="select" resultMap="result">#{id}</select>
+    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+    <select id="selectAll" resultMap="result">#{cacheKey}</select>
+    <select id="count" resultType="int">#{cacheKey}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
+    <update id="update" />
+    <update id="updatePersistent" />
+    <delete id="delete" />
+    <resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
-	    <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" />
+        <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" />
     </resultMap>
 </mapper>
 ```
