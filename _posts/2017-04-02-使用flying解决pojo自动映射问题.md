@@ -219,13 +219,13 @@ Account account = accountService.selectOne(condition);
 package myPackage;
 public interface RoleMapper {
     public Role select(Object id);
-	public Role selectOne(Role t);
-	public Collection<Role> selectAll(Role t);
-	public void insert(Role t);
-	public int update(Role t);
-	public int updatePersistent(Role t);
-	public int delete(Role t);
-	public int count(Role t);
+    public Role selectOne(Role t);
+    public Collection<Role> selectAll(Role t);
+    public void insert(Role t);
+    public int update(Role t);
+    public int updatePersistent(Role t);
+    public int delete(Role t);
+    public int count(Role t);
 }
 ```
 `Role.java` 如下：
