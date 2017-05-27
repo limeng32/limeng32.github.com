@@ -74,9 +74,9 @@ public class Account {
 
 第2行 `@FieldMapperAnnotation` 只能放在变量定义之上，它声明这个变量是一个字段，它的属性 `dbFieldName` 描述了在数据库中这个字段的名称，它的属性 `jdbcType` 描述了在数据库中这个字段的类型，它的属性 `isUniqueKey = true` 描述了这个字段是一个主键。
 
-第3行 `@FieldMapperAnnotation` 与第二行相同，它描述了另一个字段 name，值得注意的是这个字段的类型是 VARCHAR 并且不是主键。
+第3行 `@FieldMapperAnnotation` 与第二行相同，它描述了另一个字段 name，值得注意的是这个字段的类型是 varchar 并且不是主键。
 
-以上 3 个注解直白的描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，本文档在附录部分提供了一种配置方法）
+以上 3 个注解描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，本文档在附录部分提供了一种配置方法）
 
 使用以下代码，可以查询 id 为 1 的账户：
 ```
@@ -97,11 +97,11 @@ Account account = accountService.selectOne(accountCondition);
 ```
 上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
 
-同样在 AccountMapper.java 中我们需要加入
+同样在 AccountMapper.java 中我们需要加入：
 ```
 public void insert(Account t);
 ```
-就可以了。例如使用以下代码，可以增加 1 条 name 为 bob 的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
+然后使用以下代码，可以增加 1 条 name 为 “bob” 的账户数据（由于我们配置了主键自增，新增数据时不需要指定主键）：
 ```
 Account newAccount = new Account();
 newAccount.setName("bob");
@@ -111,11 +111,11 @@ accountService.insert(newAccount);
 ```
 <delete id="delete" />
 ```
-然后在 `AccountMapper.java` 中加入
+然后在 `AccountMapper.java` 中加入：
 ```
 public int delete(Account t);
 ```
-就可以了。例如使用以下代码，可以删掉 id 与 accountToDelete 的 id 一致的数据。
+然后使用以下代码，可以删掉 id 与 accountToDelete 的 id 一致的数据。
 ```
 accountService.delete(accountToDelete);
 ```
@@ -129,12 +129,12 @@ delete 方法的返回值代表执行 sql 后产生影响的条数，一般来�
 ```
 上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
 
-然后在 `AccountMapper.java` 中加入
+然后在 `AccountMapper.java` 中加入：
 ```
 public int update(Account t);
 public int updatePersistent(Account t);
 ```
-就可以了。例如使用以下代码，可以将 accountToUpdate 的 name 更新为 “duke” 。
+然后使用以下代码，可以将 accountToUpdate 的 name 更新为 “duke” 。
 ```
 accountToUpdate.setName("duke");
 accountService.update(accountToUpdate);
@@ -146,7 +146,7 @@ update 和 updatePersistent 方法的返回值代表执行 sql 后产生影响�
 accountToUpdate.setName(null);
 accountService.update(accountToUpdate);
 ```
-实际上数据库中这条数据的 name 字段不会改变，因为 flying 对为 null 的属性有保护措施。这在大多数情况下都是方便的，但如果我们真的需要在数据库中将这条数据的 name 字段设为 null，updatePersistent 就派上了用场。我们可以执行
+实际上数据库中这条数据的 name 字段不会改变，因为 flying 对为 null 的属性有保护措施。这在大多数情况下都是合理的，但如果我们真的需要在数据库中将这条数据的 name 字段设为 null，updatePersistent 就派上了用场。我们可以执行：
 ```
 accountToUpdate.setName(null);
 accountService.updatePersistent(accountToUpdate);
@@ -190,7 +190,7 @@ Collection<Account> accountCollection = accountService.selectAll(condition);
 ```
 Account account = accountService.selectOne(condition);
 ```
-由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果确实有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据，这一点用户在使用 selectOne 时需要了解。无论如何，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大便利。
+由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果确实有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据，这一点用户在使用 selectOne 时需要了解。尽管如此，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大便利。
 
 ## foreign key
 一般来说我们的 pojo 都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而 flying 完全就是为此而生。
@@ -200,8 +200,8 @@ Account account = accountService.selectOne(condition);
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.RoleMapper">
-    <cache />
-	<select id="select" resultMap="result">#{id}</select>
+        <cache />
+    <select id="select" resultMap="result">#{id}</select>
 	<select id="selectOne" resultMap="result">#{cacheKey}</select>
 	<select id="selectAll" resultMap="result">#{cacheKey}</select>
 	<select id="count" resultType="int">#{cacheKey}</select>
