@@ -399,7 +399,7 @@ public class AccountCondition extends Account implements Conditionable {
 	}
 }
 ```
-以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在flying中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。之后我们可以进行测试：
+以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在 flying 中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。然后我们可以进行测试：
 ```
 /*查询名称中带有"a"的帐户数量*/
 AccountCondition condition1 = new AccountCondition();
@@ -461,8 +461,9 @@ int countX = accountService.count(conditionX);
 /*这个用例说明所有条件变量都是可以组合使用的*/
 ```
 ## limiter & sorter
-在之前的 selectAll 查询中我们都是取符合条件的所有值，但在实际业务需求中很少会这样做，更多的情况是我们会有一个数量限制。同时我们还会希望结果集是经过某种条件排序，甚至是经过多种条件排序的，幸运的是，flying 已经为此做好了准备。
-一个可限制数量并可排序的查询对象也是由<i>查询对象</i>来实现的，代码如下：
+在之前的 selectAll 查询中我们都是取符合条件的所有值，但在实际业务需求中很少会这样做，更多的情况是我们会有一个数量限制。同时我们还会希望结果集是经过某种条件排序，甚至是经过多种条件排序的，幸运的是 flying 已经为此做好了准备。
+
+一个可限制数量并可排序的查询也是由条件对象来实现的，代码如下：
 ```
 package myPackage;
 import indi.mybatis.flying.annotations.QueryMapperAnnotation;
@@ -533,7 +534,7 @@ Collection<Account> collectionX = accountService.selectAll(coditionX);
 ```
 因为 limiter 和 sorter 也是以条件对象的方式定义，所以可以和复杂查询一起使用，只要在条件对象中既包含条件标注又包含 Limitable 和 Sortable 类型的变量即可。
 ## pagination
-在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在flying中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是 flying 自动获取的，您只需执行下面这样的代码即可：
+在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在 flying 中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是 flying 自动获取的，您只需执行下面这样的代码即可：
 ```
 import indi.mybatis.flying.pagination.Page;
 
@@ -544,17 +545,17 @@ Collection<Account> collection = accountService.selectAll(condition);
 Page<Account> page = new Page<>(collection, condition.getLimiter());
 /*需要注意的是上面的入参 condition.getLimiter() 是不能用其它 PageParam 对象代替的，因为在之前执行 selectAll 时会将一些信息保存到 condition.getLimiter() 中*/
 ```
-假设总的数据有 21 条，则 page.getTotalCount() 为 21，pagegetMaxPageNum() 为 3，page.getPageNo() 为 1，page.getPageItems() 为第一到第十条数据的集合。
+假设总的数据有 21 条，则 `page.getTotalCount()` 为 21，`pagegetMaxPageNum()` 为 3，`page.getPageNo()` 为 1，`page.getPageItems()` 为第一到第十条数据的集合。
 ## optimistic lock
 乐观锁是实际应用的数据库设计中重要的一环，而 flying 对此有良好的支持。
 目前 flying 只支持版本号型乐观锁。在 flying 中使用乐观锁的方法如下：
-首先在数据结构中增加一个表示乐观锁的 integer 型字段 opLock
+首先在数据结构中增加一个表示乐观锁的 Integer 型字段 opLock
 ```
 @FieldMapperAnnotation(dbFieldName = "opLock", jdbcType = JdbcType.INTEGER, opLockType = OpLockType.Version)
 	private Integer opLock;
 /*乐观锁可以增加 getter 方法，不建议增加 setter 方法*/
 ```
-以上实际上是给 `@FieldMapperAnnotation` 中的 `opLockType` 上赋予了 `OpLockType.Version` ，这样 flying 就会明白这是一个起乐观锁作用的字段。当含有乐观锁的表 account 更新时，实际 sql 会变为：
+以上实际上是给 `@FieldMapperAnnotation` 中的 `opLockType` 上赋予了 `OpLockType.Version`，这样 flying 就会明白这是一个起乐观锁作用的字段。当含有乐观锁的表 account 更新时，实际 sql 会变为：
 ```
 update account ... and opLock = opLock + 1 where id = '${id}' and opLock = '${opLock}'
 ```
@@ -566,9 +567,9 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 ```
 即只有 opLock 和 id 都符合时才能被删除，这里乐观锁起到了保护数据的作用。
 
-在实际应用中，可以借助 update 、updatePersistent 、delete 方法的返回值来判断是否变动了数据（一般来说返回 0 表示没变动，1 表示有变动），继而判断锁是否有效，是否合法（符合业务逻辑），最后决定整个事务是提交还是回滚。
+在实际应用中，可以借助 update、updatePersistent、delete 方法的返回值来判断是否变动了数据（一般来说返回 0 表示没变动，1 表示有变动），继而判断锁是否有效，是否合法（符合业务逻辑），最后决定整个事务是提交还是回滚。
 
-最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select 、selectAll 、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
+最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
 ## 其它
 ### 忽略选择
 有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的例子是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
@@ -592,7 +593,7 @@ accountService.update(account);
 /*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
 ```
 ### 复数外键
-有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id ，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
+有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
 ```
 <association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
 ```
