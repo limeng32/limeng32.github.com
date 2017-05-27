@@ -370,39 +370,39 @@ public class AccountCondition extends Account implements Conditionable {
     /*用作 address 需要同时匹配的若干个值的集合（类型只能为List）*/
     private List<String> addressMultiLikeAND;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeOR)
-	/*用作 address*/ 需要至少匹配之一的若干个值的集合（类型只能为List）
-	private List<String> addressMultiLikeOR;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeOR)
+    /*用作 address*/ 需要至少匹配之一的若干个值的集合（类型只能为List）
+    private List<String> addressMultiLikeOR;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.In)
-	/*用作 address*/ 可能等于的若干个值的集合（类型可为任意Collection）
-	private Collection<String> addressIn;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.In)
+    /*用作 address*/ 可能等于的若干个值的集合（类型可为任意Collection）
+    private Collection<String> addressIn;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NotIn)
-	/*用作 address*/ 不可能等于的若干个值的集合（类型可为任意Collection）
-	private Collection<String> addressNotIn;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NotIn)
+    /*用作 address 不可能等于的若干个值的集合（类型可为任意Collection）*/
+    private Collection<String> addressNotIn;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NullOrNot)
-	/*用作 address 是否为 null 的判断（类型只能为Boolean）*/
-	private Boolean addressIsNull;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.NullOrNot)
+    /*用作 address 是否为 null 的判断（类型只能为Boolean）*/
+    private Boolean addressIsNull;
 	
-	/*相关的getter和setter方法请自行补充*/
+    /*相关的getter和setter方法请自行补充*/
 	
-	/*以下四个方法是实现 Conditionable 接口后必须要定义的方法，我们这里只写出默认实现，在下一节中我们会详细介绍它们*/
-	@Override
-	public Limitable getLimiter() {
-		return null;
-	}
-	@Override
-	public void setLimiter(Limitable limiter) {
-	}
-	@Override
-	public Sortable getSorter() {
-		return null;
-	}
-	@Override
-	public void setSorter(Sortable sorter) {
-	}
+    /*以下四个方法是实现 Conditionable 接口后必须要定义的方法，我们这里只写出默认实现，在下一节中我们会详细介绍它们*/
+    @Override
+    public Limitable getLimiter() {
+        return null;
+    }
+    @Override
+    public void setLimiter(Limitable limiter) {
+    }
+    @Override
+    public Sortable getSorter() {
+        return null;
+    }
+    @Override
+    public void setSorter(Sortable sorter) {
+    }
 }
 ```
 以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在 flying 中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。然后我们可以进行测试：
