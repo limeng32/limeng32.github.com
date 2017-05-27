@@ -539,7 +539,7 @@ Collection<Account> collectionX = accountService.selectAll(coditionX);
 /*这个用例说明 limiter 和 sorter 是可以组合使用的*/
 ```
 因为 limiter 和 sorter 也是以条件对象的方式定义，所以可以和复杂查询一起使用，只要在条件对象中既包含条件标注又包含 Limitable 和 Sortable 类型的变量即可。
-## pagination
+## 分页
 在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在 flying 中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是 flying 自动获取的，您只需执行下面这样的代码即可：
 ```
 import indi.mybatis.flying.pagination.Page;
@@ -547,18 +547,19 @@ import indi.mybatis.flying.pagination.Page;
 AccountCondition condition = new AccountCondition();
 condition.setLimiter(new PageParam(0, 10));
 Collection<Account> collection = accountService.selectAll(condition);
+
 /*下面这句代码就将查询结果封装为了 Page<?> 对象*/
 Page<Account> page = new Page<>(collection, condition.getLimiter());
 /*需要注意的是上面的入参 condition.getLimiter() 是不能用其它 PageParam 对象代替的，因为在之前执行 selectAll 时会将一些信息保存到 condition.getLimiter() 中*/
 ```
 假设总的数据有 21 条，则 `page.getTotalCount()` 为 21，`pagegetMaxPageNum()` 为 3，`page.getPageNo()` 为 1，`page.getPageItems()` 为第一到第十条数据的集合。
-## optimistic lock
-乐观锁是实际应用的数据库设计中重要的一环，而 flying 对此有良好的支持。
+## 乐观锁
+乐观锁是实际应用的数据库设计中重要的一环，而 flying 在设计之初就考虑到了这一点，
 目前 flying 只支持版本号型乐观锁。在 flying 中使用乐观锁的方法如下：
-首先在数据结构中增加一个表示乐观锁的 Integer 型字段 opLock
+在数据结构中增加一个表示乐观锁的 Integer 型字段 opLock 即可：
 ```
 @FieldMapperAnnotation(dbFieldName = "opLock", jdbcType = JdbcType.INTEGER, opLockType = OpLockType.Version)
-	private Integer opLock;
+    private Integer opLock;
 /*乐观锁可以增加 getter 方法，不建议增加 setter 方法*/
 ```
 以上实际上是给 `@FieldMapperAnnotation` 中的 `opLockType` 上赋予了 `OpLockType.Version`，这样 flying 就会明白这是一个起乐观锁作用的字段。当含有乐观锁的表 account 更新时，实际 sql 会变为：
