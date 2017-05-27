@@ -478,9 +478,9 @@ import indi.mybatis.flying.models.Limitable;
 import indi.mybatis.flying.models.Sortable;
 @QueryMapperAnnotation(tableName = "account")
 public class AccountCondition extends Account implements Conditionable {
-        private Limitable limiter;
-        private Sortable sorter;
-        @Override
+    private Limitable limiter;
+    private Sortable sorter;
+    @Override
 	public Limitable getLimiter() {
 		return limiter;
 	}
