@@ -202,14 +202,14 @@ Account account = accountService.selectOne(condition);
 <mapper namespace="myPackage.RoleMapper">
     <cache />
     <select id="select" resultMap="result">#{id}</select>
-	<select id="selectOne" resultMap="result">#{cacheKey}</select>
-	<select id="selectAll" resultMap="result">#{cacheKey}</select>
-	<select id="count" resultType="int">#{cacheKey}</select>
-	<insert id="insert" useGeneratedKeys="true" keyProperty="id" />
-	<update id="update" />
-	<update id="updatePersistent" />
-	<delete id="delete" />
-	<resultMap id="result" type="Role" autoMapping="true">
+    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+    <select id="selectAll" resultMap="result">#{cacheKey}</select>
+    <select id="count" resultType="int">#{cacheKey}</select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
+    <update id="update" />
+    <update id="updatePersistent" />
+    <delete id="delete" />
+    <resultMap id="result" type="Role" autoMapping="true">
         <id property="id" column="role_id" />
     </resultMap>
 </mapper>
