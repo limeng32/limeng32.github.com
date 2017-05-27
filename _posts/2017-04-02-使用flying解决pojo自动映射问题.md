@@ -358,17 +358,17 @@ public class AccountCondition extends Account implements Conditionable {
     /*用作 name 全匹配的值*/
     private String nameLike;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.HeadLike)
-	/*用作 address 开头匹配的值*/
-	private String addressHeadLike;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.HeadLike)
+    /*用作 address 开头匹配的值*/
+    private String addressHeadLike;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.TailLike)
-	/*用作 address 结尾匹配的值*/
-	private String addressTailLike;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.TailLike)
+    /*用作 address 结尾匹配的值*/
+    private String addressTailLike;
 	
-	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeAND)
-	/*用作 address 需要同时匹配的若干个值的集合（类型只能为List）*/
-	private List<String> addressMultiLikeAND;
+    @ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeAND)
+    /*用作 address 需要同时匹配的若干个值的集合（类型只能为List）*/
+    private List<String> addressMultiLikeAND;
 	
 	@ConditionMapperAnnotation(dbFieldName = "address", conditionType = ConditionType.MultiLikeOR)
 	/*用作 address*/ 需要至少匹配之一的若干个值的集合（类型只能为List）
