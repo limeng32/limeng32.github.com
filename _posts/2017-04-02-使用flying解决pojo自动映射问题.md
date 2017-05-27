@@ -31,7 +31,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 方法描述中的 #{id} 和 selectOne 方法描述中的 #{cacheKey}是什么、以及具体的 sql 在哪里。不要急这些问题在后面会有解答，马上我们在对象实体 Account 中就会意识到 flying 的存在。 Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 方法描述中的 #{id} 和 selectOne 方法描述中的 #{cacheKey}是什么、以及具体的 sql 在哪里。不要急这些问题在附录中会有解答。马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -567,7 +567,9 @@ private Integer opLock;
 update account ... and opLock = opLock + 1 where id = '${id}' and opLock = '${opLock}'
 ```
 （上面 ... 中的内容是给其它的字段赋值）
+
 每次更新时都会加入 opLock 的判断，并且更新数据时 opLock 自增 1 ，这样就可以保证多个线程对同一个 account 执行 update 或 updatePersistent 时只有一个能执行成功，即达到了我们需要的锁效果。
+
 当含有乐观锁的表 account 删除时，实际 sql 会变为：
 ```
 delete from account where id = '${id}' and opLock = '${opLock}'
@@ -612,7 +614,7 @@ private Role secondRole;
 ```
 如此一来表 account 和表 role 就构成了复数外键关系。flying 支持复数外键，您可以像操作普通外键一样操作它，代码如下：
 ```
-/*查询角色名称为 "user",同时兼职角色名称为 "super_user"的账户*/
+/*查询角色名称为 "user",同时兼职角色名称为 "super_user" 的账户*/
 Account condition = new Account();
 Role role = new Role(), secondRole = new Role();
 role.setName("user");
@@ -623,4 +625,11 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ```
 可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
 ## 附录
+### 常见问题（Frequently Asked Questions）
+1、<i>pojo_mapper</i>.xml 中的 #{id} 和 #{cacheKey} 是什么？
+A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴即可。
+
+2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
+A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
+
 ### AccountService的实现方式
