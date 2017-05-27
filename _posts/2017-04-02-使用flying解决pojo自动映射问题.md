@@ -481,21 +481,21 @@ public class AccountCondition extends Account implements Conditionable {
     private Limitable limiter;
     private Sortable sorter;
     @Override
-	public Limitable getLimiter() {
-		return limiter;
-	}
-	@Override
-	public void setLimiter(Limitable limiter) {
-		this.limiter = limiter;
-	}
-	@Override
-	public Sortable getSorter() {
-		return sorter;
-	}
-	@Override
-	public void setSorter(Sortable sorter) {
-		this.sorter = sorter;
-	}
+    public Limitable getLimiter() {
+        return limiter;
+    }
+    @Override
+    public void setLimiter(Limitable limiter) {
+        this.limiter = limiter;
+    }
+    @Override
+    public Sortable getSorter() {
+        return sorter;
+    }
+    @Override
+    public void setSorter(Sortable sorter) {
+        this.sorter = sorter;
+    }
 }
 ```
 以上 limiter 和 sorter 变量名并非固定，只要类引入了 Conditionable 接口并实现相关方法，且在相关方法中对应上您定义的 limiter 和 sorter 即可。
