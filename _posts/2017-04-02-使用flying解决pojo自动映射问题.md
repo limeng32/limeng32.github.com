@@ -8,7 +8,7 @@ category: blog
 ## Hello World
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
-无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 pojo_mapper.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是一个有代表性的配置文件 account.xml ：
+无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 <i>pojo_mapper</i>.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是一个有代表性的配置文件 account.xml ：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -21,9 +21,9 @@ category: blog
     </resultMap>
 </mapper>
 ``` 
-在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper ，一个方法 select ，一个方法 selectOne ，一个对象实体 Account ，以及表结构 resultMap 。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段 mybatis 会自动感知。
+在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper，一个方法 select ，一个方法 selectOne，一个对象实体 Account，以及数据库表结构 resultMap。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段 mybatis 会自动感知。
 
-myPackage.AccountMapper 接口是 mybatis 本身需要的，里面的内容和此配置文件中定义的方法相对应。如果您有使用 mybatis 的经验您就能立刻想到， AccountMapper.java 中的内容是：
+myPackage.AccountMapper 接口是 mybatis 本身需要的，里面的内容和 account.xml 中定义的方法相对应。如果您有使用 mybatis 的经验您就能立刻想到， AccountMapper.java 中的内容是：
 ```
 package myPackage;
 public interface AccountMapper {
@@ -31,7 +31,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能唯一奇怪的一点就是 account.xml 中的 select 方法描述中的 #{id} ，selectOne 方法描述中的 #{cacheKey}，以及具体的 sql 在哪里。不要急，马上在对象实体 Account 中我们就会见识到 flying 的存在。 Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 方法描述中的 #{id} 和 selectOne 方法描述中的 #{cacheKey}是什么、以及具体的 sql 在哪里。不要急这些问题在后面会有解答，马上我们在对象实体 Account 中就会意识到 flying 的存在。 Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -63,18 +63,20 @@ public class Account {
 可见，和普通的 pojo 相比， Account.java 只是多了以下3行注解而已：
 ```
     @TableMapperAnnotation(tableName = "account")
+    
     @FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
+    
     @FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR) 
 ```
 下面我们分别来解释它们的含义。
 
-第1行 `@TableMapperAnnotation` 只能放在类定义之上，它声明这个类是一个表，它的属性 tableName 描述了这个表在数据库中的名字。
+第1行 `@TableMapperAnnotation` 只能放在类定义之上，它声明这个类是一个表，它的属性 `tableName` 描述了这个表在数据库中的名字。
 
-第2行 `@FieldMapperAnnotation` 只能放在变量定义之上，它声明这个变量是一个字段，它的属性 `dbFieldName` 描述了在数据库中这个字段的名称，属性 `jdbcType` 描述了在数据库中这个字段的类型，属性 `isUniqueKey = true` 描述了这个字段是主键。
+第2行 `@FieldMapperAnnotation` 只能放在变量定义之上，它声明这个变量是一个字段，它的属性 `dbFieldName` 描述了在数据库中这个字段的名称，它的属性 `jdbcType` 描述了在数据库中这个字段的类型，它的属性 `isUniqueKey = true` 描述了这个字段是一个主键。
 
 第3行 `@FieldMapperAnnotation` 与第二行相同，它描述了另一个字段 name，值得注意的是这个字段的类型是 VARCHAR 并且不是主键。
 
-以上 3 个注解直白的描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，本文档不对此进行累述）
+以上 3 个注解直白的描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，本文档在附录部分提供了一种配置方法）
 
 使用以下代码，可以查询 id 为 1 的账户：
 ```
@@ -615,3 +617,5 @@ condition.setSecondRole(secondRole);
 Collection<Account> accounts = accountService.selectAll(condition);
 ```
 可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
+## 附录
+### AccountService的实现方式
