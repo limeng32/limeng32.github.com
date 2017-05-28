@@ -632,4 +632,56 @@ A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴�
 2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
 
-### AccountService的实现方式
+### AccountService 的实现方式
+```
+package myPackage;
+import java.util.Collection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+@Service
+public class AccountService implements AccountMapper {
+
+	@Autowired
+	private AccountMapper mapper;
+
+	@Override
+	public Account select(Object id) {
+		return mapper.select(id);
+	}
+
+	@Override
+	public Account selectOne(Account t) {
+		return mapper.selectOne(t);
+	}
+	
+	@Override
+	public Collection<Account> selectAll(Account t) {
+		return mapper.selectAll(t);
+	}
+	
+	@Override
+	public void insert(Account t) {
+		mapper.insert(t);
+	}
+
+	@Override
+	public int update(Account t) {
+		return mapper.update(t);
+	}
+
+	@Override
+	public int updatePersistent(Account t) {
+		return mapper.updatePersistent(t);
+	}
+
+	@Override
+	public int delete(Account t) {
+		return mapper.delete(t);
+	}
+
+	@Override
+	public int count(Account t) {
+		return mapper.count(t);
+	}
+}
+```
