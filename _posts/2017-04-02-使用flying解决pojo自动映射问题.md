@@ -31,7 +31,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 方法描述中的 #{id} 和 selectOne 方法描述中的 #{cacheKey}是什么、以及具体的 sql 在哪里。不要急这些问题在附录中会有解答。马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 方法描述中的 #{id} 和 selectOne 方法描述中的 #{cacheKey}是什么、以及具体的 sql 在哪里。[不要急这些问题在附录中会有解答。](#FAQ)马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -76,7 +76,7 @@ public class Account {
 
 第3行 `@FieldMapperAnnotation` 与第二行相同，它描述了另一个字段 name，值得注意的是这个字段的类型是 varchar 并且不是主键。
 
-以上 3 个注解描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，本文档在附录部分提供了一种配置方法）
+以上 3 个注解描述了表 account 的数据结构，然后我们就可以使用 AccountService 非常方便的操纵数据库的读取了。（AccountService 是 AccountMapper 的实现类，单独使用或在 spring 中使用都有多种方法进行配置，[本文档在附录部分提供了一种配置方法](#AccountService)）
 
 使用以下代码，可以查询 id 为 1 的账户：
 ```
@@ -603,7 +603,6 @@ accountService.update(account);
 ```
 ### 复数外键
 有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
-[user-content-AccountService 的实现方式](#AccountService)
 ```
 <association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
 ```
@@ -626,7 +625,8 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ```
 可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
 ## 附录
-### 常见问题（Frequently Asked Questions）
+<a id="FAQ"></a>
+### 常见问题
 1、<i>pojo_mapper</i>.xml 中的 #{id} 和 #{cacheKey} 是什么？
 
 A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴即可。
@@ -634,8 +634,8 @@ A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴�
 2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
 
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
-
-### AccountService 的实现方式<a id="AccountService"></a>
+<a id="AccountService"></a>
+### AccountService 的实现方式
 在 spring 3.x 及更高版本中，可以按以下方式构建一个 <i>pojoService</i>.java 类：
 ```
 package myPackage;
