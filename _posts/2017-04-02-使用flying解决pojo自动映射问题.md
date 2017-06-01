@@ -4,6 +4,7 @@ title: 使用 flying 解决 pojo 自动映射问题
 description: 本节内容向您讲解如何使用 AutoMapperInterceptor 拦截器来实现pojo的自动映射。
 category: blog
 ---
+
 ## 目录
 - [Hello World](#hello-world)
 - [insert & delete](#insert--delete)
@@ -19,13 +20,14 @@ category: blog
   - [复数外键](#%E5%A4%8D%E6%95%B0%E5%A4%96%E9%94%AE)
 - [附录](#%E9%99%84%E5%BD%95)
   - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+  - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
+  - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [AccountService 的实现方式](#accountservice-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F)
-
-
+  
 ## Hello World
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
-无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 <i>pojo_mapper</i>.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是一个有代表性的配置文件 account.xml ：
+无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 <i>pojo_mapper</i>.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是 [一个有代表性的 account 表](#AccountTableCreater) 以及对应它的配置文件 account.xml ：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -212,7 +214,7 @@ Account account = accountService.selectOne(condition);
 ## foreign key
 一般来说我们的 pojo 都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而 flying 完全就是为此而生。
 
-首先我们定义一个新的 pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建 `role.xml`、`RoleMapper.java` 以及 `Role.java`。`role.xml` 如下：
+首先我们定义一个新的 pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建 [一个有代表性的 role 表](#RoleTableCreater)、`role.xml`、`RoleMapper.java` 以及 `Role.java`。`role.xml` 如下：
 ``` 
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
@@ -651,6 +653,30 @@ A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴�
 2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
 
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
+
+<a id="AccountTableCreater" />
+### account 表建表语句
+```
+CREATE TABLE account (
+  account_id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(20) DEFAULT NULL,
+  address varchar(100) DEFAULT NULL,
+  fk_role_id int(11) DEFAULT NULL,
+  fk_second_role_id int(11) DEFAULT NULL,
+  PRIMARY KEY (account_id)
+)
+```
+
+<a id="RoleTableCreater" />
+### role 表建表语句
+```
+CREATE TABLE role (
+  role_id int(11) NOT NULL AUTO_INCREMENT,
+  role_name varchar(30) DEFAULT NULL,
+  PRIMARY KEY (role_id)
+)
+```
+
 <a id="AccountService"></a>
 ### AccountService 的实现方式
 在 spring 3.x 及更高版本中，可以按以下方式构建一个 <i>pojoService</i>.java 类：
