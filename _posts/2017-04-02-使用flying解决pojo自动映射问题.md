@@ -4,7 +4,7 @@ title: 使用 flying 解决 pojo 自动映射问题
 description: 本节内容向您讲解如何使用 AutoMapperInterceptor 拦截器来实现pojo的自动映射。
 category: blog
 ---
-
+[TOC]
 ## Hello World
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
