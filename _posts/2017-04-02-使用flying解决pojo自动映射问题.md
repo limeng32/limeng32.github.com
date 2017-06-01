@@ -603,7 +603,7 @@ accountService.update(account);
 ```
 ### 复数外键
 有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
-[user-content-AccountService 的实现方式](#user-content-AccountService 的实现方式)
+[user-content-AccountService的实现方式](#user-content-AccountService 的实现方式)
 ```
 <association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
 ```
@@ -635,6 +635,7 @@ A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴�
 
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
 
+<a id="AccountService"></a>
 ### AccountService 的实现方式
 在 spring 3.x 及更高版本中，可以按以下方式构建一个 <i>pojoService</i>.java 类：
 ```
