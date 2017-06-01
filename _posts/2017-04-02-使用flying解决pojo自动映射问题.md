@@ -1,6 +1,9 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+---
+layout: post
+title: 使用 flying 解决 pojo 自动映射问题
+description: 本节内容向您讲解如何使用 AutoMapperInterceptor 拦截器来实现pojo的自动映射。
+category: blog
+---
 
 - [Hello World](#hello-world)
 - [insert & delete](#insert--delete)
@@ -18,14 +21,6 @@
   - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
   - [AccountService 的实现方式](#accountservice-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
----
-layout: post
-title: 使用 flying 解决 pojo 自动映射问题
-description: 本节内容向您讲解如何使用 AutoMapperInterceptor 拦截器来实现pojo的自动映射。
-category: blog
----
 ## Hello World
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
