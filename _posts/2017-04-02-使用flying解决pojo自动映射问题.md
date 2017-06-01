@@ -603,7 +603,7 @@ accountService.update(account);
 ```
 ### 复数外键
 有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
-[user-content-AccountService的实现方式](#user-content-AccountService 的实现方式)
+[user-content-AccountService 的实现方式](#user-content-AccountService的实现方式)
 ```
 <association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
 ```
