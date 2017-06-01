@@ -636,7 +636,7 @@ A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴�
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
 
 <a id="AccountService"></a>
-### AccountService 的实现方式
+### AccountService的实现方式
 在 spring 3.x 及更高版本中，可以按以下方式构建一个 <i>pojoService</i>.java 类：
 ```
 package myPackage;
