@@ -4,7 +4,7 @@ title: 使用 flying 解决 pojo 自动映射问题
 description: 本节内容向您讲解如何使用 AutoMapperInterceptor 拦截器来实现pojo的自动映射。
 category: blog
 ---
-
+<a id="Index"></a>
 ## 目录
 - [Hello World](#hello-world)
 - [insert & delete](#insert--delete)
@@ -109,7 +109,7 @@ Account account = accountService.selectOne(accountCondition);
 ```
 与以往的方式相比，这种方式是不是变得优雅了很多？关于 select 和 selectOne 之间的区别，我们在后面的章节会讲到。
 
-## insert & delete
+## insert & delete                              [返回](#Index)
 在最基本的 select 之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
 ```
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
