@@ -109,7 +109,7 @@ Account account = accountService.selectOne(accountCondition);
 ```
 与以往的方式相比，这种方式是不是变得优雅了很多？关于 select 和 selectOne 之间的区别，我们在后面的章节会讲到。
 
-## insert & delete                              [返回](#Index)
+## [insert & delete](#Index)
 在最基本的 select 之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
 ```
 <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
