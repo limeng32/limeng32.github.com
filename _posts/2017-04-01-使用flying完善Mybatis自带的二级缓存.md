@@ -51,7 +51,9 @@ public interface AccountMapper {
     <role role_id="11" role_name="super_user" />
 </dataset>
 ```
-当我们第一次执行 `accountService.select(1);` 时，会从数据库中得到一个 `name` 为 “frank” 的 Account 对象，当再次执行 `accountService.select(1);` 时，会不经数据库从缓存中得到这个 Account 对象。如果我们在数据库中直接修改了这条记录，比如将 `name` 改为 “iris”，缓存也不会知道我们做出了改动，再次执行 `accountService.select(1);` 得到的 pojo 的 `name` 依然为 `frank`。但接下来如果我们执行 `accountService.update(account);` 将此对象的 `name` 改为 “hank”，则在数据库中的记录变更后缓存中的对象也会刷新，下一次再执行 `accountService.select(1);` 得到的 Account 对象的 `name` 就是 “hank” 了。
+当我们第一次执行 `accountService.select(1);` 时，会从数据库中得到一个 `name` 为 “frank” 的 Account 对象，当再次执行 `accountService.select(1);` 时，会不经数据库而从缓存中得到这个 Account 对象。如果我们通过数据库管理工具直接修改了这条记录，比如将 `name` 改为 “iris”，缓存也不会知道我们做出了改动，再次执行 `accountService.select(1);` 得到的 pojo 的 `name` 依然为 `frank`。但接下来如果我们在程序中执行 `accountService.update(account);` 将此对象的 `name` 改为 “hank”，则在数据库中的记录变更后缓存中的对象也会刷新，下一次再执行 `accountService.select(1);` 得到的 Account 对象的 `name` 就是 “hank” 了。
+
+最后，我们强烈不建议在开启缓存的项目正在运行的情况下，通过数据库管理工具直接修改数据，这会导致数据库和缓存不一致，就像上一段中演示的那样。当您得到缓存的好处时，您也只使用已经定义好的方法来操作数据。（实际上，我们不建议通过数据库管理工具直接修改任何正在运行中的系统，无论它是否使用了缓存。）
 ## [观察者 & 触发者](#Index)
 
 
