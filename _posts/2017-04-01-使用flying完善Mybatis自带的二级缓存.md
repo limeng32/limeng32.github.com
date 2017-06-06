@@ -75,9 +75,9 @@ public interface RoleMapper {
 ```
 <plugins>
     <plugin interceptor="indi.mybatis.flying.interceptors.EnhancedCachingInterceptor">
-		<property name="cacheEnabled" value="true" />
-		<property name="annotationPackage" value="myPackage" />
-	</plugin>
+        <property name="cacheEnabled" value="true" />
+        <property name="annotationPackage" value="myPackage" />
+    </plugin>
 </plugins>
 ```
 其中 `cacheEnabled` 为 `true` 表示让优化插件生效，`annotationPackage` 的值则是放置您所有 <i>pojo_mapper</i>.java 接口的包路径。
