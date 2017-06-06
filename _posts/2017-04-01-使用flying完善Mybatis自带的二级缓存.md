@@ -21,6 +21,13 @@ mybatis 的二级缓存只存在于内存中，不会写入硬盘，所以服务
 	<setting name="lazyLoadTriggerMethods" value="" />
 </settings>
 ```
+需要注意的是 `settings` 中第一行 `cacheEnabled` 的值为 `true`，其它内容都和 《为什么要开发mybatis.flying》 中介绍的配置完全一致。
+
+在完成上述工作后，mybatis 的二级缓存就可以使用了。现在启动项目后，每次对数据库发起的查询请求都会被缓存进行拦截，如果在缓存中能找到结果（包括单个 pojo、pojo集合、数量等）就直接返回结果，不会对数据库产生压力；如果找不到结果再去数据库中进行查询，查询后返回结果的同时把此次结果记入缓存中，这样下次再进行相同条件查询时如果相关记录没进行过刷新型操作（如 insert、update、delete），就会返回缓存中的结果；如果对某条数据进行了 insert、update、delete 操作，会使得相关缓存失效，其中的机制在后面会有详细介绍。
+
+由于服务容器刚启动时缓存中没有任何内容，因此所有查询第一次都会经过数据库，在此之后缓存将发挥作用。为了更好的说明，我们需要新建[一个账号表](#AccountTableCreater)、相关的 `account.xml`、`AccountMapper.java` 以及 `Account.java`。
+
+
 ## [观察者 & 触发者](#Index)
 
 
@@ -28,3 +35,25 @@ mybatis 的二级缓存只存在于内存中，不会写入硬盘，所以服务
 
 
 ## [附录](#Index)
+<a id="AccountTableCreater"></a>
+### [account 表建表语句](#Index)
+```
+CREATE TABLE account (
+  account_id int(11) NOT NULL AUTO_INCREMENT,
+  name varchar(20) DEFAULT NULL,
+  address varchar(100) DEFAULT NULL,
+  fk_role_id int(11) DEFAULT NULL,
+  fk_second_role_id int(11) DEFAULT NULL,
+  PRIMARY KEY (account_id)
+)
+```
+
+<a id="RoleTableCreater"></a>
+### [role 表建表语句](#Index)
+```
+CREATE TABLE role (
+  role_id int(11) NOT NULL AUTO_INCREMENT,
+  role_name varchar(30) DEFAULT NULL,
+  PRIMARY KEY (role_id)
+)
+```
