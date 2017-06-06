@@ -24,7 +24,7 @@ category: blog
   - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [AccountService 的实现方式](#accountservice-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F)
   
-## Hello World
+## [Hello World](#Index)
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
 无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 <i>pojo_mapper</i>.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是 [一个有代表性的 account 表](#AccountTableCreater) 以及对应它的配置文件 account.xml ：
@@ -140,7 +140,7 @@ accountService.delete(accountToDelete);
 ```
 delete 方法的返回值代表执行 sql 后产生影响的条数，一般来说，返回值为 0 表示 sql 执行后没有效果，返回值为 1 表示 sql 执行成功，在代码中可以通过判断 delete 方法的返回值来实现更复杂的事务逻辑。
 
-## update & updatePersistent
+## [update & updatePersistent](#Index)
 接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和 updatePersistent（完全更新）。首先，在 `account.xml` 中增加以下内容：
 ```
 <update id="update" />
@@ -172,7 +172,7 @@ accountService.updatePersistent(accountToUpdate);
 ```
 这样数据库中这条数据的 name 字段就会变为 null。可见 updatePersistent 会把 pojo 中所有的属性都更新到数据库中，而 update 只更新不为 null 的属性。在实际使用 updatePersistent 时，您需要特别小心慎重，因为当时 pojo 中为 null 的属性有可能比您想象的多。
 
-## selectAll & count
+## [selectAll & count](#Index)
 在之前学习 select 和 selectOne 时，细心的您可能已经发现，这两个方法要完成的工作似乎是相同的。的确 select 和 selectOne 都返回 1 个绑定了数据的 pojo，但它们接受的参数不同：select 接受主键参数；selectOne 接受 pojo 参数，这个 pojo 中的所有被 `@FieldMapperAnnotation` 标记过的属性都会作为“相等”条件传递到 sql 语句中。之所以要这么设计，是因为我们有时会需要按照一组条件返回多条数据或者数量，即 selectAll 方法与 count 方法，这个时候以 pojo 作为入参最为合适。为了更清晰的讲述，我们先给 `Account.java` 再增加一个属性 address：
 ```
 @FieldMapperAnnotation(dbFieldName = "address", jdbcType = JdbcType.VARCHAR)
@@ -211,7 +211,7 @@ Account account = accountService.selectOne(condition);
 ```
 由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果确实有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据，这一点用户在使用 selectOne 时需要了解。尽管如此，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大便利。
 
-## foreign key
+## [foreign key](#Index)
 一般来说我们的 pojo 都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而 flying 完全就是为此而生。
 
 首先我们定义一个新的 pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建 [一个有代表性的 role 表](#RoleTableCreater)、`role.xml`、`RoleMapper.java` 以及 `Role.java`。`role.xml` 如下：
@@ -360,7 +360,7 @@ accountService.updatePersistent(newAccount);
 /*现在 newAccount.getRole()为 null，在数据库中也不再有关联（注意在这里 update 方法起不到这种效果，因为 update 会忽略 null）*/
 ```
 
-## complex condition
+## [complex condition](#Index)
 之前我们展示的例子中，条件只有“相等”一种，但在实际情况中我们会遇到各种各样的条件：大于、不等于、like、in、is not null 等等。这些情况 flying 也是能够处理的，但首先我们要引入一个“条件对象”的概念。条件对象是实体对象的子类，但它只为查询而存在，它拥有实体对象的全部属性，同时它还有一些专为查询服务的属性。例如下面是 Account 对象的条件对象 AccountCondition 的代码：
 ```
 package myPackage;
@@ -485,7 +485,7 @@ conditionX.setAddressHeadLike("bei");
 int countX = accountService.count(conditionX);
 /*这个用例说明所有条件变量都是可以组合使用的*/
 ```
-## limiter & sorter
+## [limiter & sorter](#Index)
 在之前的 selectAll 查询中我们都是取符合条件的所有值，但在实际业务需求中很少会这样做，更多的情况是我们会有一个数量限制。同时我们还会希望结果集是经过某种条件排序，甚至是经过多种条件排序的，幸运的是 flying 已经为此做好了准备。
 
 一个可限制数量并可排序的查询也是由条件对象来实现的，代码如下：
@@ -558,7 +558,7 @@ Collection<Account> collectionX = accountService.selectAll(coditionX);
 /*这个用例说明 limiter 和 sorter 是可以组合使用的*/
 ```
 因为 limiter 和 sorter 也是以条件对象的方式定义，所以可以和复杂查询一起使用，只要在条件对象中既包含条件标注又包含 Limitable 和 Sortable 类型的变量即可。
-## 分页
+## [分页](#Index)
 在大多数实际业务需求中，我们的 limiter 和 sorter 都是为分页服务。在 flying 中，我们提供了一种泛型 Page&lt;?&gt; 来封装查询出的数据。使用 Page&lt;?&gt; 的好处是，它除了提供数据内容（pageItems）外还提供了全部数量（totalCount）、最大页数（maxPageNum）、当前页数（pageNo）等信息，这都是数据接收端希望了解的信息。并且这些数量信息是 flying 自动获取的，您只需执行下面这样的代码即可：
 ```
 import indi.mybatis.flying.pagination.Page;
@@ -572,7 +572,7 @@ Page<Account> page = new Page<>(collection, condition.getLimiter());
 /*需要注意的是上面的入参 condition.getLimiter() 是不能用其它 PageParam 对象代替的，因为在之前执行 selectAll 时会将一些信息保存到 condition.getLimiter() 中*/
 ```
 假设总的数据有 21 条，则 `page.getTotalCount()` 为 21，`pagegetMaxPageNum()` 为 3，`page.getPageNo()` 为 1，`page.getPageItems()` 为第一到第十条数据的集合。
-## 乐观锁
+## [乐观锁](#Index)
 乐观锁是实际应用的数据库设计中重要的一环，而 flying 在设计之初就考虑到了这一点，
 目前 flying 只支持版本号型乐观锁。在 flying 中使用乐观锁的方法如下：
 在数据结构中增加一个表示乐观锁的 Integer 型字段 opLock 即可：
@@ -598,8 +598,8 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 在实际应用中，可以借助 update、updatePersistent、delete 方法的返回值来判断是否变动了数据（一般来说返回 0 表示没变动，1 表示有变动），继而判断锁是否有效，是否合法（符合业务逻辑），最后决定整个事务是提交还是回滚。
 
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
-## 其它
-### 忽略选择
+## [其它](#Index)
+### [忽略选择](#Index)
 有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的例子是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
 ```
 @FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoredSelect = true)
@@ -620,7 +620,7 @@ account.setPassword("654321");
 accountService.update(account);
 /*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
 ```
-### 复数外键
+### [复数外键](#Index)
 有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
 ```
 <association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
@@ -643,9 +643,9 @@ condition.setSecondRole(secondRole);
 Collection<Account> accounts = accountService.selectAll(condition);
 ```
 可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
-## 附录
+## [附录](#Index)
 <a id="FAQ"></a>
-### 常见问题
+### [常见问题](#Index)
 1、<i>pojo_mapper</i>.xml 中的 #{id} 和 #{cacheKey} 是什么？
 
 A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴即可。
@@ -655,7 +655,7 @@ A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴�
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
 
 <a id="AccountTableCreater"></a>
-### account 表建表语句
+### [account 表建表语句](#Index)
 ```
 CREATE TABLE account (
   account_id int(11) NOT NULL AUTO_INCREMENT,
@@ -668,7 +668,7 @@ CREATE TABLE account (
 ```
 
 <a id="RoleTableCreater"></a>
-### role 表建表语句
+### [role 表建表语句](#Index)
 ```
 CREATE TABLE role (
   role_id int(11) NOT NULL AUTO_INCREMENT,
@@ -678,7 +678,7 @@ CREATE TABLE role (
 ```
 
 <a id="AccountService"></a>
-### AccountService 的实现方式
+### [AccountService 的实现方式](#Index)
 在 spring 3.x 及更高版本中，可以按以下方式构建一个 <i>pojoService</i>.java 类：
 ```
 package myPackage;
