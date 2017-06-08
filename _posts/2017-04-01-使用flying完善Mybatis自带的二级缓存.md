@@ -121,18 +121,60 @@ public interface AccountMapper {
 }
 ```
 接下来我们对这些注解依次说明：
-`@CacheRoleAnnotation` 只能放在类定义之上，它声明当前 <i>pojo_mapper</i>.java 接口对应的 pojo 是哪些 pojo 的观察者，也就是说 `ObserverClass` 里需要填写当前 pojo 的所有<b>直接触发者</b>的类名（无需填写间接触发者，因为 flying 在运行期可以推导出），`TriggerClass` 则<b>只需填写当前接口对应的 pojo 类名</b>。填好以后 `@CacheRoleAnnotation` 就配置完毕。
+`@CacheRoleAnnotation` 只能放在类定义之上，它声明当前 <i>pojo_mapper</i>.java 接口对应的 pojo 和其它 pojo 的关系，具体来说，`ObserverClass` 描述的是当前 pojo 是哪些 pojo 的观察者，因此需要填写当前 pojo 的所有<b>直接触发者</b>的类名（无需填写间接触发者，因为 flying 在运行期可以推导出），`TriggerClass` 则<b>只需填写当前接口对应的 pojo 类名</b>。填好以后 `@CacheRoleAnnotation` 就配置完毕。
 
-`@CacheAnnotation` 只能放在方法定义之上，它声明当前这个方法是具有“触发”能力还是具有“观察”能力。具有触发能力的方法可以刷新这个接口的观察者的缓存，具有观察能力的方法可以发现这个接口的触发者的缓存已刷新，因为 触发－观察 关系可以传递，最终所有 pojo 的缓存关系都会被 flying 所获知。
+`@CacheAnnotation` 只能放在方法定义之上，它声明当前这个方法是具有“触发”能力还是具有“观察”能力。具有触发能力的方法可以刷新这个类的观察者的缓存，具有观察能力的方法可以发现自己的缓存已被刷新，因为 触发－观察 关系可以传递，最终所有 pojo 的缓存关系都会被 flying 所获知。
 
-在 flying 给定的方法中，`update`、`updatePersistent`、`delete` 具有触发能力，`select`、`selectOne`、`selectAll`、`count` 具有观察能力，`insert` 既不具备触发能力也不具备观察能力。如果您在 <i>pojo_mapper</i>.java 中还有自己定义的方法，需要看这个方法对应的 sql 语句类型，如果是 update 或 delete 类型就具有触发能力，如果是 select 类型就具有观察能力。
+在 flying 给定的方法中，`update`、`updatePersistent`、`delete` 具有触发能力，`select`、`selectOne`、`selectAll`、`count` 具有观察能力，所以要在相应的方法上配置 `@CacheRoleAnnotation` 注解。`insert` 既不具有触发能力也不具有观察能力。如果您在 <i>pojo_mapper</i>.java 中还有自己定义的方法，需要看这个方法对应的 sql 语句类型来进行配置，如果是 update 或 delete 类型就具有触发能力，如果是 select 类型就具有观察能力。
 
-按以上情况配置好后，flying 优化 mybatis 二级缓存的工作就完成了，现在您可以放心的使用 mybatis 的自带缓存，而不用担心任何缓存与数据库不匹配的问题。
+同样，RoleMapper.java 中也要增加一些注解：
+```
+package myPackage;
+import indi.mybatis.flying.annotations.CacheAnnotation;
+import indi.mybatis.flying.annotations.CacheRoleAnnotation;
+import indi.mybatis.flying.statics.CacheRoleType;
+
+@CacheRoleAnnotation(ObserverClass = {}, TriggerClass = { Role.class })
+public interface RoleMapper {
+
+	@CacheAnnotation(role = CacheRoleType.Observer)
+	public Role select(Object id);
+
+	@CacheAnnotation(role = CacheRoleType.Observer)
+	public Collection<Role> selectAll(Role t);
+
+	@CacheAnnotation(role = CacheRoleType.Observer)
+	public Role selectOne(Role t);
+
+	@CacheAnnotation(role = CacheRoleType.Observer)
+	public int count(Role t);
+
+	public void insert(Role t);
+
+	@CacheAnnotation(role = CacheRoleType.Trigger)
+	public int update(Role t);
+
+	@CacheAnnotation(role = CacheRoleType.Trigger)
+	public int updatePersistent(Role t);
+
+	@CacheAnnotation(role = CacheRoleType.Trigger)
+	public int delete(Role t);
+}
+```
+（如上可见，当前系统中 Role 对象已无父对象，也就是 Role 不是任何对象的观察者，因此它的 `@CacheRoleAnnotation` 中的 `ObserverClass` 为空，但在它的方法中，仍然建议将具有观察能力的方法上的注解写全，这样当您以后扩展项目需要为 Role 类时增加父对象时，只需要在 `@CacheRoleAnnotation` 中的 `ObserverClass` 上增加类名即可，不需要再修改方法上面的注解）
+
+当您所有的 <i>pojo_mapper</i>.java 都按以上情况配置好后，flying 优化 mybatis 二级缓存的工作就完成了，现在您可以放心的使用 mybatis 的自带缓存，而不用担心任何缓存与数据库不匹配的问题。
 
 ## [注意事项](#Index)
+### [flying 做了什么](#Index)
 
+### [flying 如何判断缓存是否命中](#Index)
+
+### [flying 已回滚的操作是否会生成缓存](#Index)
 
 ## [附录](#Index)
+<a id="FAQ"></a>
+### [常见问题](#Index)
 <a id="AccountTableCreater"></a>
 ### [account 表建表语句](#Index)
 ```
