@@ -4,6 +4,17 @@ title: 使用 flying 完善Mybatis 自带的二级缓存
 description: 本节内容向您讲解如何使用 EnhancedCachingInterceptor 拦截器来改造Mybatis的二级缓存使其可用。
 category: blog
 ---
+
+- [上手指南](#%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97)
+- [观察者 & 触发者](#%E8%A7%82%E5%AF%9F%E8%80%85--%E8%A7%A6%E5%8F%91%E8%80%85)
+- [注意事项](#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
+  - [flying 如何判断缓存是否命中](#flying-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E7%BC%93%E5%AD%98%E6%98%AF%E5%90%A6%E5%91%BD%E4%B8%AD)
+  - [flying 已回滚的操作是否会生成缓存](#flying-%E5%B7%B2%E5%9B%9E%E6%BB%9A%E7%9A%84%E6%93%8D%E4%BD%9C%E6%98%AF%E5%90%A6%E4%BC%9A%E7%94%9F%E6%88%90%E7%BC%93%E5%AD%98)
+- [附录](#%E9%99%84%E5%BD%95)
+  - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+  - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
+  - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
+
 <a id="Index"></a>
 ## [上手指南](#Index)
 上一篇文章中我们介绍了使用 flying 解决 pojo 自动映射问题，在本篇文章中我们介绍如何使用 flying 优化后的 mybatis 自带二级缓存。通常我们会选择 Redis 等更为强大的第三方缓存，但如果您的系统用户数不到一千，您也不想为缓存配置额外的服务器，那您可以试试 mybatis 自带的二级缓存，因为它方便上手且成本极低。
@@ -168,7 +179,7 @@ public interface RoleMapper {
 ## [注意事项](#Index)
 
 ### [flying 如何判断缓存是否命中](#Index)
-flying 的缓存的 key 值是由查询条件 pojo 按业务属性序列化后再取 md5 生成，这样可保证不同线程上相同的查询条件 pojo 能够命中。因此使用缓存插件的前提条件是使用了 pojo 自动映射插件，它无法单独使用。
+flying 的缓存的 key 值是由查询条件 pojo 按业务属性序列化后再取 md5 生成，这样可保证不同线程上相同的查询条件 pojo 能够互相命中。因此使用缓存插件的前提条件是使用了<b>我们上一节介绍的 pojo 自动映射插件</b>，缓存插件无法单独使用。
 
 ### [flying 已回滚的操作是否会生成缓存](#Index)
 不会生成。因为在您正确设计事务的情况下，未提交的（即被回滚）的数据变化是不会被查询到的，没有查询就不会生成缓存，所以您的缓存永远会和您的数据库保持一致，您可以放心的在有事务逻辑的系统中使用 flying 优化过的 mybatis 二级缓存。
