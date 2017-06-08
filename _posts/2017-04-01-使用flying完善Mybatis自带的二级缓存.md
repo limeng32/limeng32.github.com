@@ -4,7 +4,8 @@ title: 使用 flying 完善Mybatis 自带的二级缓存
 description: 本节内容向您讲解如何使用 EnhancedCachingInterceptor 拦截器来改造Mybatis的二级缓存使其可用。
 category: blog
 ---
-
+<a id="Index"></a>
+## 目录
 - [上手指南](#%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97)
 - [观察者 & 触发者](#%E8%A7%82%E5%AF%9F%E8%80%85--%E8%A7%A6%E5%8F%91%E8%80%85)
 - [注意事项](#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
@@ -15,7 +16,6 @@ category: blog
   - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
 
-<a id="Index"></a>
 ## [上手指南](#Index)
 上一篇文章中我们介绍了使用 flying 解决 pojo 自动映射问题，在本篇文章中我们介绍如何使用 flying 优化后的 mybatis 自带二级缓存。通常我们会选择 Redis 等更为强大的第三方缓存，但如果您的系统用户数不到一千，您也不想为缓存配置额外的服务器，那您可以试试 mybatis 自带的二级缓存，因为它方便上手且成本极低。
 
