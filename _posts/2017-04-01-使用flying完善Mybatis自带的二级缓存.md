@@ -121,9 +121,9 @@ public interface AccountMapper {
 }
 ```
 接下来我们对这些注解依次说明：
-`@CacheRoleAnnotation` 只能放在类定义之上，它声明从当前这个 <i>pojo_mapper</i>.java 接口角度看待其它 pojo 的关系，具体来说，`ObserverClass` 里需要填写当前 pojo 的所有<b>直接触发者</b>的类名（无需填写间接触发者，因为 flying 在运行期可以推导出），`TriggerClass` 则<b>只需填写当前接口对应的 pojo 类名</b>。填好以后，`@CacheRoleAnnotation` 就配置完毕。
+`@CacheRoleAnnotation` 只能放在类定义之上，它声明当前 <i>pojo_mapper</i>.java 接口对应的 pojo 是哪些 pojo 的观察者，也就是说 `ObserverClass` 里需要填写当前 pojo 的所有<b>直接触发者</b>的类名（无需填写间接触发者，因为 flying 在运行期可以推导出），`TriggerClass` 则<b>只需填写当前接口对应的 pojo 类名</b>。填好以后 `@CacheRoleAnnotation` 就配置完毕。
 
-`@CacheAnnotation` 只能放在方法定义之上，它声明当前这个方法是具有“触发”能力还是具有“观察”能力。具有触发能力的方法可以刷新这个接口的观察者的缓存，具有观察能力的方法可以发现这个接口的触发者的缓存被刷新，因为 触发－观察 关系可以传递，最终所有 pojo 的缓存关系都会被 flying 所掌握。
+`@CacheAnnotation` 只能放在方法定义之上，它声明当前这个方法是具有“触发”能力还是具有“观察”能力。具有触发能力的方法可以刷新这个接口的观察者的缓存，具有观察能力的方法可以发现这个接口的触发者的缓存已刷新，因为 触发－观察 关系可以传递，最终所有 pojo 的缓存关系都会被 flying 所获知。
 
 在 flying 给定的方法中，`update`、`updatePersistent`、`delete` 具有触发能力，`select`、`selectOne`、`selectAll`、`count` 具有观察能力，`insert` 既不具备触发能力也不具备观察能力。如果您在 <i>pojo_mapper</i>.java 中还有自己定义的方法，需要看这个方法对应的 sql 语句类型，如果是 update 或 delete 类型就具有触发能力，如果是 select 类型就具有观察能力。
 
