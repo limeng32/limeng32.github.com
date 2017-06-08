@@ -12,7 +12,6 @@ category: blog
   - [flying 如何判断缓存是否命中](#flying-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E7%BC%93%E5%AD%98%E6%98%AF%E5%90%A6%E5%91%BD%E4%B8%AD)
   - [flying 已回滚的操作是否会生成缓存](#flying-%E5%B7%B2%E5%9B%9E%E6%BB%9A%E7%9A%84%E6%93%8D%E4%BD%9C%E6%98%AF%E5%90%A6%E4%BC%9A%E7%94%9F%E6%88%90%E7%BC%93%E5%AD%98)
 - [附录](#%E9%99%84%E5%BD%95)
-  - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
   - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
 
