@@ -5,7 +5,7 @@ layout: default
 <body class="body-post">
   <div class="post-wrapper">
     <h1 class="post-title"><a href="{{ page.url }}" title="{{ page.title }}">{{ page.title }}</a></h1>
-    <p class="title-desc">{{ post.description }}</p>
+    <p class="title-desc">{{ page.description }}</p>
     {{ content }}
     {% include disqus.html %}
   </div>
