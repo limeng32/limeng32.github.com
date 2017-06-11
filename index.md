@@ -9,7 +9,7 @@ layout: default
         <h1>my bat is flying</h1>
         <a href="https://github.com/limeng32/mybatis.flying/" target="_blank"><img src="https://github.com/favicon.ico" alt="" width="25"/></a>
         <a href="https://www.zhihu.com/people/li-meng-48/" target="_blank"><img src="https://www.zhihu.com/favicon.ico" alt="" width="22"/></a>
-        <a href="https://user.qzone.qq.com/540906853/" target="_blank"><img src="https://cdn3.iconfinder.com/data/icons/social-media/512/QQ-24.png" alt="" width="24"/></a>
+        <a href="https://user.qzone.qq.com/540906853/" target="_blank"><img src="https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/qq-24.png" alt="" width="24"/></a>
       </div>
       <div id="particles-js"></div>
     </div>
