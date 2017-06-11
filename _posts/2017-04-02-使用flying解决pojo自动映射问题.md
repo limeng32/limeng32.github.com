@@ -33,8 +33,8 @@ category: blog
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
     <cache />
-    <select id="select" resultMap="result">#{id}</select>
-    <select id="selectOne" resultMap="result">#{cacheKey}</select>
+    <select id="select" resultMap="result">#{_flying_}</select>
+    <select id="selectOne" resultMap="result">#{_flying_}</select>
     <resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
     </resultMap>
@@ -50,7 +50,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 方法描述中的 #{id} 和 selectOne 方法描述中的 #{cacheKey}是什么、以及具体的 sql 在哪里。[不要急这些问题在附录中会有解答。](#FAQ)马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 和 selectOne 方法描述中的 #{_flying_} 是什么、以及具体的 sql 在哪里。[不要急这些问题在附录中会有解答。](#FAQ)马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -181,8 +181,8 @@ private java.lang.String address;
 ```
 然后我们在 `account.xml` 中增加以下内容：
 ```
-<select id="selectAll" resultMap="result">#{cacheKey}</select>
-<select id="count" resultType="int">#{cacheKey}</select>
+<select id="selectAll" resultMap="result">#{_flying_}</select>
+<select id="count" resultType="int">#{_flying_}</select>
 ```
 再在 `AccountMapper.java` 中加入
 ```
@@ -220,10 +220,10 @@ Account account = accountService.selectOne(condition);
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.RoleMapper">
     <cache />
-    <select id="select" resultMap="result">#{id}</select>
-    <select id="selectOne" resultMap="result">#{cacheKey}</select>
-    <select id="selectAll" resultMap="result">#{cacheKey}</select>
-    <select id="count" resultType="int">#{cacheKey}</select>
+    <select id="select" resultMap="result">#{_flying_}</select>
+    <select id="selectOne" resultMap="result">#{_flying_}</select>
+    <select id="selectAll" resultMap="result">#{_flying_}</select>
+    <select id="count" resultType="int">#{_flying_}</select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
     <update id="update" />
     <update id="updatePersistent" />
@@ -285,10 +285,10 @@ private Role role;
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
     <cache />
-    <select id="select" resultMap="result">#{id}</select>
-    <select id="selectOne" resultMap="result">#{cacheKey}</select>
-    <select id="selectAll" resultMap="result">#{cacheKey}</select>
-    <select id="count" resultType="int">#{cacheKey}</select>
+    <select id="select" resultMap="result">#{_flying_}</select>
+    <select id="selectOne" resultMap="result">#{_flying_}</select>
+    <select id="selectAll" resultMap="result">#{_flying_}</select>
+    <select id="count" resultType="int">#{_flying_}</select>
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
     <update id="update" />
     <update id="updatePersistent" />
@@ -646,9 +646,9 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
-1、<i>pojo_mapper</i>.xml 中的 #{id} 和 #{cacheKey} 是什么？
+1、<i>pojo_mapper</i>.xml 中的 #{_flying_} 是什么？
 
-A：这是 flying 内部的约定方法，您只需原封不动的复制粘贴即可。
+A：这是 flying 内部的约定方法，它解决了 mybatis 默认一级缓存中很容易出现的一些问题，并为 flying 提供了一个占位以方便未来的扩展，您只需原封不动的复制粘贴即可。
 
 2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
 
