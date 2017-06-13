@@ -10,7 +10,7 @@ layout: default
         <a href="https://github.com/limeng32/mybatis.flying/" target="_blank"><img src="https://cdn2.iconfinder.com/data/icons/social-icons-33/128/Github-32.png" alt="" width="24"/></a>
         <a href="https://www.zhihu.com/people/li-meng-48/" target="_blank"><img src="https://cdn4.iconfinder.com/data/icons/chinas-social-share-icons/256/cssi_zhihu-32.png" alt="" width="24"/></a>
         <a href="https://user.qzone.qq.com/540906853/" target="_blank"><img src="https://cdn4.iconfinder.com/data/icons/chinas-social-share-icons/256/cssi_wangwang-32.png" alt="" width="24"/></a>
-        <a href="https://user.qzone.qq.com/540906853/" target="_blank"><img src="https://cdn2.iconfinder.com/data/icons/font-awesome/1792/qq-32.png" alt="" width="24"/></a>
+        <a href="https://user.qzone.qq.com/540906853/" target="_blank"><img src="https://cdn0.iconfinder.com/data/icons/social-flat-rounded-rects/512/qq-32.png" alt="" width="24"/></a>
       </div>
       <div id="particles-js"></div>
     </div>
