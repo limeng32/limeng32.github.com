@@ -90,7 +90,7 @@ public interface RoleMapper {
     </plugin>
 </plugins>
 ```
-其中 `cacheEnabled` 为 `true` 表示让优化插件生效，`annotationPackage` 的值则是放置您所有 <i>pojo_mapper</i>.java 接口的包路径。
+其中 `cacheEnabled` 为 `true` 表示让优化插件生效，`annotationPackage` 的值则是放置您所有 <i>pojo_mapper</i>.java 接口的包路径。如果您的 <i>pojo_mapper</i>.java 在多个包下（例如您在项目中用 mybatis 管理多个数据源，每个数据源的 <i>pojo_mapper</i>.java 放在不同的包内），这里可以配置多个包路径，只需用英文逗号分开即可，如 `value="myPackage,myPackage2"` 这样。如果您有未声明的 <i>pojo_mapper</i>.java，则该 pojo 对应的缓存不会被优化。
 
 然后我们来介绍<b>观察者</b>和<b>触发者</b>的概念。在有父子关系的两个 pojo 中，父对象自身的改变可以使子对象的缓存失效，因此父对象可以称作子对象的<b>触发者</b>，而因为子对象只能参考它的父对象，子对象又可称为父对象的<b>观察者</b>。值得一提的是，这两种称呼都是基于 pojo 的关系的。所以会出现这种情况：pojo A 是 B 的触发者，pojo B 是 A 的观察者；同时 pojo B 是 C 的触发者，pojo C 是 B 的观察者。触发-观察关系可以传递，因此可以称 pojo A 是 C 的<b>间接触发者</b>，pojo C 是 A 的<b>间接观察者</b>。（如果两个 pojo 间有 触发-观察 关系但又不是直接关联，那就称为 间接触发-间接观察 关系，稍后您就后明白为什么要这么定义）。
 
