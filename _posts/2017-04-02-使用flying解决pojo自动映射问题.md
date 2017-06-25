@@ -646,7 +646,7 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
-1、<i>pojo_mapper</i>.xml 中的 #{_flying_} 是什么？
+1、<i>pojo_mapper</i>.xml 中的 #{&#95;flying&#95;} 是什么？
 
 A：这是 flying 内部的约定方法，它解决了 mybatis 默认一级缓存中很容易出现的一些问题，并为 flying 提供了一个占位以方便未来的扩展，您只需原封不动的复制粘贴即可。
 
