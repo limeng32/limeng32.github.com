@@ -13,11 +13,11 @@ layout: default
         <a href="https://user.qzone.qq.com/540906853/" target="_blank"><img src="https://cdn4.iconfinder.com/data/icons/flat-brand-logo-2/512/qq-32.png" alt="" width="24"/></a>
       </div>
       <div id="particles-js">
+      </div>
       <img src="https://travis-ci.org/limeng32/mybatis.flying.svg?branch=master" alt=""/>
         <img src="https://codecov.io/gh/limeng32/mybatis.flying/branch/master/graph/badge.svg" alt="" />
         <img src="https://maven-badges.herokuapp.com/maven-central/com.github.limeng32/mybatis.flying/badge.svg" alt="" />
         <img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg" alt="" />
-      </div>
     </div>
 
     <div class="index-content">
