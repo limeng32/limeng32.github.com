@@ -14,12 +14,11 @@ layout: default
       </div>
       <div id="particles-js">
       </div>
-      <img src="https://travis-ci.org/limeng32/mybatis.flying.svg?branch=master" alt=""/>
+    </div>
+<img src="https://travis-ci.org/limeng32/mybatis.flying.svg?branch=master" alt=""/>
         <img src="https://codecov.io/gh/limeng32/mybatis.flying/branch/master/graph/badge.svg" alt="" />
         <img src="https://maven-badges.herokuapp.com/maven-central/com.github.limeng32/mybatis.flying/badge.svg" alt="" />
         <img src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg" alt="" />
-    </div>
-
     <div class="index-content">
       <ul class="artical-list">
         {% for post in site.categories.blog %}
