@@ -33,14 +33,14 @@ category: blog
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
     <cache />
-    <select id="select" resultMap="result">#{_flying_}</select>
-    <select id="selectOne" resultMap="result">#{_flying_}</select>
+    <select id="select" resultMap="result">flying#{?}:select</select>
+    <select id="selectOne" resultMap="result">flying:selectOne</select>
     <resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
     </resultMap>
 </mapper>
 ``` 
-在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper，一个方法 select ，一个方法 selectOne，一个对象实体 Account，以及数据库表结构 resultMap。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），其余字段 mybatis 会自动感知。
+在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper，一个方法 select ，一个方法 selectOne，一个对象实体 Account，以及数据库表结构 resultMap。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），mybatis 会自动感知与 Account.java 中对应的变量名相同的字段，但与变量名差异较大的字段仍需在 resultMap 中声明。
 
 myPackage.AccountMapper 接口是 mybatis 本身需要的，里面的内容和 account.xml 中定义的方法相对应。如果您有使用 mybatis 的经验您就能立刻想到， AccountMapper.java 中的内容是：
 ```
@@ -50,7 +50,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 和 selectOne 方法描述中的 #{_flying_} 是什么、以及具体的 sql 在哪里。[不要急这些问题在附录中会有解答。](#FAQ)马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么、以及具体的 sql 在哪里。[不要急这些问题在附录中会有解答。](#FAQ)马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -646,9 +646,27 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
-1、<i>pojo_mapper</i>.xml 中的 #{&#95;flying&#95;} 是什么？
+1、<i>pojo_mapper</i>.xml 中的 flying#{?}:select 是什么？
 
-A：这是 flying 内部的约定方法，它解决了 mybatis 默认一级缓存中很容易出现的一些问题，并为 flying 提供了一个占位以方便未来的扩展，您只需原封不动的复制粘贴即可。
+A：这是 flying 的特征值描述，如果您想用 flying 管理一个数据库操作，就用这行特征值替代原本应该写的 sql 语句，它的具体格式使用 linux 风格描述如下：
+```
+flying#{?}:{select|selectOne|selectAll|count|insert|update|updatePersistent|delete}[:<ignoreTag>]
+```
+在第一个 : 之前的部分是 flying 的标识符，其中的#{?}在一些情况下可以省略。
+
+第一个 : 和第二个 : 之间的部分是 flying 操作数据的方法，目前支持的方法有：
+select （按主键查询，并返回结果集中的对象）
+selectOne （按条件对象查询，只返回结果集中的第一个对象）
+selectAll （按条件对象查询，返回结果集中所有对象组成的集合）
+count （按条件对象查询，返回结果数量）
+insert （按参数对象增加一条记录）
+update （按参数对象中的非 null 属性更新一条记录，以参数主键为准）
+updatePersistent （按参数对象中的所有属性更新一条记录，以参数主键为准，此操作会把参数对象为 null 属性在数据库中也更新为 null）
+delete （按参数对象的主键删除一条记录）
+其它的方法还在开发之中，如果您有特别的想法也可以提给我。
+当操作数据的方法不是 select 时，flying的标识符中的 #{?} 可以省略。
+
+第二个 : 之后的部分是忽略标记，忽略标记是可选的。在 select、selectAll、selectOne 类型操作中如果配置了忽略标记，会使返回结果的类定义中配置了相同忽略标记的变量不被查询出来。在其它类型操作中配置忽略标记没有效果。
 
 2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
 
