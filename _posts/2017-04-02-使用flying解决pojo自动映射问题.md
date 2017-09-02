@@ -600,13 +600,13 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
 ## [其它](#Index)
 ### [ignore tag](#Index)
-有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的例子是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
+有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
 ```
-@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoredSelect = true)
+@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword" })
 private String password;
 /*相关的getter和setter方法请自行补充*/
 ```
-这样在查询 account 表时就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
+这样我们将 `password` 这个字段加上了一个忽略标记 `noPassword`，然后在查询 account 表时相关 flying 特征值最后加上 `:noPassword` 就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
 ```
 /*查找 name 为 "user" 且 password 为 "123456" 的一个账户*/
 Account condition = new Account();
@@ -620,6 +620,21 @@ account.setPassword("654321");
 accountService.update(account);
 /*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
 ```
+另一种场景是查询对象中有一个长度很大的属性，例如我们又有一个在数据库中类型为 VARCHAR(3000) 的属性 `detail`，我们在 account.java 中增加如下代码：
+```
+@FieldMapperAnnotation(dbFieldName = "detail", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noDetail" })
+private String detail;
+/*相关的getter和setter方法请自行补充*/
+```
+此时 flying 特征值为 `flying:select:noDetail` 的查询方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，如 `flying:select`。
+如果我们想既不查询 `detail` 又不查询 `password`，可在 `password` 的注解上再增加一个忽略标记，就像下面这样：
+```
+@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword", "noDetail" })
+private String password;
+```
+这时特征值 `flying:select:noDetail` 就既忽略 `detail` 又忽略 `password`。
+由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会被查询，但是 flying 特征值中只能出现一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
+最后，flying 特征值中的忽略标记没有传递性，只对当前查询对象有效而对自动查询的父对象无效。例如对 `Account` 对象的 `flying:select:noPassword` 查询，其忽略标记对自动查询的父对象 `Role` 无效，哪怕 `Role` 中有 `ignoreTag` 等于 'noPassword' 的属性也会显示。如果您需要激活自动查询的父对象中的忽略标记，您需要从 `<resultMap>` 中的 `<association>`，具体可以参考我们提供的 demo。
 ### [复数外键](#Index)
 有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
 ```
