@@ -16,7 +16,7 @@ category: blog
 - [分页](#%E5%88%86%E9%A1%B5)
 - [乐观锁](#%E4%B9%90%E8%A7%82%E9%94%81)
 - [其它](#%E5%85%B6%E5%AE%83)
-  - [忽略选择](#IgnoreTag)
+  - [ignore tag](#ignore-tag)
   - [复数外键](#%E5%A4%8D%E6%95%B0%E5%A4%96%E9%94%AE)
 - [附录](#%E9%99%84%E5%BD%95)
   - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
@@ -599,7 +599,7 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
 ## [其它](#Index)
-### [IgnoreTag](#Index)
+### [ignore tag](#Index)
 有时候，我们希望在查询结果中时隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的例子是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
 ```
 @FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoredSelect = true)
