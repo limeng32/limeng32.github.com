@@ -2,7 +2,7 @@ permalink: /:title
 
 title: flying-doc
 url: https://limeng32.github.io
-feed: https://limeng32.github.io/atom.xml
+feed: http://flying-doc.limeng32.com/atom.xml
 marked: 
   gfm: true
   breaks: true
