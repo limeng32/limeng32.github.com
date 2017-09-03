@@ -33,14 +33,18 @@ category: blog
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
     <cache />
-    <select id="select" resultMap="result">flying#{?}:select</select>
-    <select id="selectOne" resultMap="result">flying:selectOne</select>
+    <select id="select" resultMap="result">
+        flying#{?}:select
+    </select>
+    <select id="selectOne" resultMap="result">
+        flying:selectOne
+    </select>
     <resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
     </resultMap>
 </mapper>
 ``` 
-在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper，一个方法 select ，一个方法 selectOne，一个对象实体 Account，以及数据库表结构 resultMap。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），mybatis 会自动感知与 Account.java 中对应的变量名相同的字段，但与变量名差异较大的字段仍需在 resultMap 中声明。
+在以上配置文件中，我们描述了一个接口 myPackage.AccountMapper，一个方法 select ，一个方法 selectOne，一个对象实体 Account，以及数据库表结构 resultMap。在 resultMap 中由于设置了 `autoMapping="true"`，我们只需要写出主键（以及外键，在稍后的章节会讲到），mybatis 会自动感知与 Account.java 中对应的变量名相同的字段，但与变量名有差异的字段仍需在 resultMap 中声明。
 
 myPackage.AccountMapper 接口是 mybatis 本身需要的，里面的内容和 account.xml 中定义的方法相对应。如果您有使用 mybatis 的经验您就能立刻想到， AccountMapper.java 中的内容是：
 ```
@@ -50,7 +54,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的几个地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么、以及具体的 sql 在哪里。[不要急这些问题在附录中会有解答。](#FAQ)马上我们在对象实体 Account 中就会意识到 flying 的存在，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在附录中会有解释。](#FAQ)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -82,9 +86,7 @@ public class Account {
 可见，和普通的 pojo 相比， Account.java 只是多了以下3行注解而已：
 ```
     @TableMapperAnnotation(tableName = "account")
-    
     @FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
-    
     @FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR) 
 ```
 下面我们分别来解释它们的含义。
@@ -112,7 +114,9 @@ Account account = accountService.selectOne(accountCondition);
 ## [insert & delete](#Index)
 在最基本的 select 之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
 ```
-<insert id="insert" useGeneratedKeys="true" keyProperty="id" />
+<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    flying:insert
+</insert>
 ```
 上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
 
@@ -600,13 +604,17 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
 ## [其它](#Index)
 ### [ignore tag](#Index)
-有时候，我们希望在查询结果中隐藏某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
+有时候，我们希望在查询中忽略某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
 ```
 @FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword" })
 private String password;
 /*相关的getter和setter方法请自行补充*/
 ```
 这样我们将 `password` 这个字段加上了一个忽略标记 `noPassword`，然后在查询 account 表时相关 flying 特征值最后加上 `:noPassword` 就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
+```
+<select id="selectOne" resultMap="result">flying:selectOne:noPassword</select>
+```
+然后，可通过代码验证 `password` 属性已被忽略
 ```
 /*查找 name 为 "user" 且 password 为 "123456" 的一个账户*/
 Account condition = new Account();
@@ -620,13 +628,13 @@ account.setPassword("654321");
 accountService.update(account);
 /*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
 ```
-另一种场景是查询对象中有一个长度很大的属性，例如我们在数据库中新增一个类型为 VARCHAR(3000) 的属性 `detail`，我们在 account.java 中增加如下代码：
+另一种场景是查询对象中有一个长度很大的属性，例如我们在数据库中有一个类型为 VARCHAR(3000) 的属性 `detail`，为性能考虑，在不需要查看细节的情况下我们不想将其 select 出来，而忽略标记就可以做到这一点。我们在 account.java 中增加如下代码：
 ```
 @FieldMapperAnnotation(dbFieldName = "detail", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noDetail" })
 private String detail;
 /*相关的getter和setter方法请自行补充*/
 ```
-此时用 flying 特征值为 `flying:select:noDetail` 的方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，例如 `flying:select`。
+此时用 flying 特征值为 `flying:select:noDetail` 的方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，例如直接用 `flying:select`。
 
 如果我们想既不查询 `detail` 又不查询 `password`，可在 `password` 的注解上使用多个忽略标记，就像下面这样：
 ```
@@ -634,7 +642,7 @@ private String detail;
 private String password;
 ```
 这时特征值 `flying:select:noDetail` 就既忽略 `detail` 又忽略 `password`。
-由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会被查询，但是 flying 特征值只能激活一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
+由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会被查询到；但是 flying 特征值每次只能激活一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
 
 最后，flying 特征值中的忽略标记没有传递性，只对当前查询对象有效而对自动查询的父对象无效。例如对 `Account` 对象的 `flying:select:noPassword` 查询，其忽略标记对自动查询的父对象 `Role` 无效，哪怕 `Role` 中有 `ignoreTag` 等于 'noPassword' 的属性也会查询出来。如果您需要激活自动查询的父对象中的忽略标记，您需要调整 `<resultMap>` 中的 `<association>` 的设置，具体可以参考我们提供的 demo。
 ### [复数外键](#Index)
