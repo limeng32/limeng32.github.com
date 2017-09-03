@@ -7,23 +7,42 @@ category: blog
 <a id="Index"></a>
 ## 目录
 - [Hello World](#hello-world)
+
+- [flying 特征值描述](#flying-%E7%89%B9%E5%BE%81%E5%80%BC%E6%8F%8F%E8%BF%B0)
+
 - [insert & delete](#insert--delete)
+
 - [update & updatePersistent](#update--updatepersistent)
+
 - [selectAll & count](#selectall--count)
+
 - [foreign key](#foreign-key)
+
 - [complex condition](#complex-condition)
+
 - [limiter & sorter](#limiter--sorter)
+
 - [分页](#%E5%88%86%E9%A1%B5)
+
 - [乐观锁](#%E4%B9%90%E8%A7%82%E9%94%81)
+
 - [其它](#%E5%85%B6%E5%AE%83)
+
   - [ignore tag](#ignore-tag)
+
   - [复数外键](#%E5%A4%8D%E6%95%B0%E5%A4%96%E9%94%AE)
+
 - [附录](#%E9%99%84%E5%BD%95)
+
   - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+
   - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
+
   - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
+
   - [AccountService 的实现方式](#accountservice-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F)
-  
+
+
 ## [Hello World](#Index)
 上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
@@ -54,7 +73,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在附录中会有解释。](#FAQ)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在 flying 特征值描述部分会有解释。](#FAQ)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
@@ -110,6 +129,32 @@ accountCondition.setName("andy");
 Account account = accountService.selectOne(accountCondition);
 ```
 与以往的方式相比，这种方式是不是变得优雅了很多？关于 select 和 selectOne 之间的区别，我们在后面的章节会讲到。
+
+## [flying 特征值描述](#Index)
+<i>pojo_mapper</i>.xml 中的 flying#{?}:select 即是 flying 的特征值描述，如果您想用 flying 管理一个数据库操作，就用这行值替代原本应该写的 sql 语句，它的格式使用 linux 风格描述如下：
+```
+flying#{?}:select[:<ignoreTag>]
+```
+或者
+```
+flying:{selectOne|selectAll|count|insert|update|updatePersistent|delete}[:<ignoreTag>]
+```
+在第一个“:”之前的部分是 flying 的标识符，为避免复数外键时的缓存问题，当您使用 select 操作时需在 flying 后面加上 #{?}，当您使用其它类型操作时不需要加 #{?}。
+
+第一个“:”和第二个“:”之间的部分是 flying 操作数据的方法，目前支持的方法有：
+`select`：按主键查询，并返回结果集中的对象；
+`selectOne`：按条件对象查询，只返回结果集中的第一个对象；
+`selectAll`：按条件对象查询，返回结果集中所有对象组成的集合；
+`count`：按条件对象查询，返回结果数量；
+`insert`：按参数对象增加一条记录；
+`update`：按参数对象中的非 null 属性更新一条记录，以参数主键为准；
+`updatePersistent`：按参数对象中的所有属性更新一条记录，以参数主键为准，此操作会把参数对象为 null 属性在数据库中也更新为 null；
+`delete`：按参数对象的主键删除一条记录；
+本文为描述方便，大部分方法名（即方法配置中的 id）与其操作类型（即 flying 特征值的中间部分）相同，实际上方法名可以任意取，当您打算在同一个 <i>pojo_mapper</i>.xml 中定义多个操作类型相同的方法时就会用到。其它操作类型的开发还在评估之中，如果您有想法也可以告诉我们。
+
+第二个“:”之后的部分是忽略标记，忽略标记是可选的。在 select、selectAll、selectOne 类型操作中如果配置了忽略标记，会使返回结果的类定义中配置了相同忽略标记的变量不被查询出来。在其它类型操作中配置忽略标记没有效果。
+
+关于忽略标记更多的内容请见 [本文 ignore tag 部分。](#ignore-tag)
 
 ## [insert & delete](#Index)
 在最基本的 select 之后，我们再看新增功能。但在此之前，需要先在 account.xml 中增加以下内容：
@@ -719,34 +764,7 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
-1、<i>pojo_mapper</i>.xml 中的 flying#{?}:select 是什么？
-
-A：这是 flying 的特征值描述，如果您想用 flying 管理一个数据库操作，就用这行值替代原本应该写的 sql 语句，它的格式使用 linux 风格描述如下：
-```
-flying#{?}:select[:<ignoreTag>]
-```
-或者
-```
-flying:{selectOne|selectAll|count|insert|update|updatePersistent|delete}[:<ignoreTag>]
-```
-在第一个“:”之前的部分是 flying 的标识符，为避免复数外键时的缓存问题，当您使用 select 操作时需在 flying 后面加上 #{?}，当您使用其它类型操作时不需要加 #{?}。
-
-第一个“:”和第二个 : 之间的部分是 flying 操作数据的方法，目前支持的方法有：
-`select`：按主键查询，并返回结果集中的对象；
-`selectOne`：按条件对象查询，只返回结果集中的第一个对象；
-`selectAll`：按条件对象查询，返回结果集中所有对象组成的集合；
-`count`：按条件对象查询，返回结果数量；
-`insert`：按参数对象增加一条记录；
-`update`：按参数对象中的非 null 属性更新一条记录，以参数主键为准；
-`updatePersistent`：按参数对象中的所有属性更新一条记录，以参数主键为准，此操作会把参数对象为 null 属性在数据库中也更新为 null；
-`delete`：按参数对象的主键删除一条记录；
-其它的方法还在评估之中，如果您有想法也可以告诉我们。
-
-第二个“:”之后的部分是忽略标记，忽略标记是可选的。在 select、selectAll、selectOne 类型操作中如果配置了忽略标记，会使返回结果的类定义中配置了相同忽略标记的变量不被查询出来。在其它类型操作中配置忽略标记没有效果。
-
-关于忽略标记更多的内容请见 [本文 ignore tag 部分。](#ignore-tag)
-
-2、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
+1、为何<i>pojo_mapper</i>.xml 中没有 sql 语句细节？
 
 A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段名，就绝对不会出现 sql 书写上的问题。并且 flying 采用了缓存机制，您无需担心动态生成 sql 的效率问题。
 
