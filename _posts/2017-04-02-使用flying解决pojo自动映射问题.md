@@ -85,9 +85,9 @@ public class Account {
 ```    
 可见，和普通的 pojo 相比， Account.java 只是多了以下3行注解而已：
 ```
-    @TableMapperAnnotation(tableName = "account")
-    @FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
-    @FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR) 
+@TableMapperAnnotation(tableName = "account")
+@FieldMapperAnnotation(dbFieldName = "id", jdbcType = JdbcType.INTEGER, isUniqueKey = true)
+@FieldMapperAnnotation(dbFieldName = "name", jdbcType = JdbcType.VARCHAR) 
 ```
 下面我们分别来解释它们的含义。
 
@@ -118,7 +118,7 @@ Account account = accountService.selectOne(accountCondition);
     flying:insert
 </insert>
 ```
-上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
+上面的 `useGeneratedKeys="true"` 表示主键自增，如果您不使用主键自增策略此处可以省略，上面的语句和一般 mybatis 映射文件的区别在于具体 sql 语句变成了 flying 特征值描述。
 
 同样在 AccountMapper.java 中我们需要加入：
 ```
@@ -132,7 +132,9 @@ accountService.insert(newAccount);
 ```
 然后我们再看删除功能。先在 account.xml 中增加以下内容：
 ```
-<delete id="delete" />
+<delete id="delete">
+    flying:delete
+</delete>
 ```
 然后在 `AccountMapper.java` 中加入：
 ```
@@ -147,10 +149,14 @@ delete 方法的返回值代表执行 sql 后产生影响的条数，一般来�
 ## [update & updatePersistent](#Index)
 接下来我们看看更新功能，这里我们要介绍两个方法：update（更新）和 updatePersistent（完全更新）。首先，在 `account.xml` 中增加以下内容：
 ```
-<update id="update" />
-<update id="updatePersistent" />
+<update id="update">
+    flying:update
+</update>
+<update id="updatePersistent">
+    flying:updatePersistent
+</update>
 ```
-上面的语句和一般 mybatis 映射文件的区别在于没有具体 sql 语句。
+上面的语句和一般 mybatis 映射文件的区别在于具体 sql 语句变成了 flying 特征值描述。
 
 然后在 `AccountMapper.java` 中加入：
 ```
@@ -185,8 +191,12 @@ private java.lang.String address;
 ```
 然后我们在 `account.xml` 中增加以下内容：
 ```
-<select id="selectAll" resultMap="result">#{_flying_}</select>
-<select id="count" resultType="int">#{_flying_}</select>
+<select id="selectAll" resultMap="result">
+    flying:selectAll
+</select>
+<select id="count" resultType="int">
+    flying:count
+</select>
 ```
 再在 `AccountMapper.java` 中加入
 ```
@@ -213,10 +223,10 @@ Collection<Account> accountCollection = accountService.selectAll(condition);
 ```
 Account account = accountService.selectOne(condition);
 ```
-由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果确实有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据，这一点用户在使用 selectOne 时需要了解。尽管如此，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大便利。
+由此可见 selectOne 可以称作是 selectAll 的特殊形式，它只会返回一个 pojo 而不是 pojo 的集合。如果真的有多条数据符合给定的 codition ，也只会返回查询结果中排在最前面的数据。尽管如此，在合适的地方使用 selectOne 代替 selectAll，会让您的程序获得极大方便。
 
 ## [foreign key](#Index)
-一般来说我们的 pojo 都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而 flying 完全就是为此而生。
+一般来说我们的 pojo 都是业务相关的，而这些相关性归纳起来无外乎一对一、一对多和多对多。其中一对一是一对多的特殊形式，多对多本质上是由两个一对多组成，所以我们只需要着重解决一对多关系，而 flying 就是为此而生的。
 
 首先我们定义一个新的 pojo：角色（role）。角色和账户是一对多关系，即一个账户只能拥有一个角色，一个角色可以被多个账户拥有。为此我们要新建 [一个有代表性的 role 表](#RoleTableCreater)、`role.xml`、`RoleMapper.java` 以及 `Role.java`。`role.xml` 如下：
 ``` 
@@ -224,14 +234,30 @@ Account account = accountService.selectOne(condition);
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.RoleMapper">
     <cache />
-    <select id="select" resultMap="result">#{_flying_}</select>
-    <select id="selectOne" resultMap="result">#{_flying_}</select>
-    <select id="selectAll" resultMap="result">#{_flying_}</select>
-    <select id="count" resultType="int">#{_flying_}</select>
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
-    <update id="update" />
-    <update id="updatePersistent" />
-    <delete id="delete" />
+    <select id="select" resultMap="result">
+        flying#{?}:select
+    </select>
+    <select id="selectOne" resultMap="result">
+        flying:selectOne
+    </select>
+    <select id="selectAll" resultMap="result">
+        flying:selectAll
+    </select>
+    <select id="count" resultType="int">
+        flying:count
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        flying:insert
+    </insert>
+    <update id="update">
+        flying:update
+    </update>
+    <update id="updatePersistent">
+        flying:updatePersistent
+    </update>
+    <delete id="delete">
+        flying:delete
+    </delete>
     <resultMap id="result" type="Role" autoMapping="true">
         <id property="id" column="role_id" />
     </resultMap>
@@ -289,14 +315,30 @@ private Role role;
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="myPackage.AccountMapper">
     <cache />
-    <select id="select" resultMap="result">#{_flying_}</select>
-    <select id="selectOne" resultMap="result">#{_flying_}</select>
-    <select id="selectAll" resultMap="result">#{_flying_}</select>
-    <select id="count" resultType="int">#{_flying_}</select>
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id" />
-    <update id="update" />
-    <update id="updatePersistent" />
-    <delete id="delete" />
+    <select id="select" resultMap="result">
+        flying#{?}:select
+    </select>
+    <select id="selectOne" resultMap="result">
+        flying:selectOne
+    </select>
+    <select id="selectAll" resultMap="result">
+        flying:selectAll
+    </select>
+    <select id="count" resultType="int">
+        flying:count
+    </select>
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        flying:insert
+    </insert>
+    <update id="update">
+        flying:update
+    </update>
+    <update id="updatePersistent">
+        flying:updatePersistent
+    </update>
+    <delete id="delete">
+        flying:delete
+    </delete>
     <resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
         <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" />
@@ -334,7 +376,7 @@ Collection<Account> accounts = accountService.selectAll(accountCondition);
 /*我们再给入参pojo加一个address限制*/
 accountCondition.setAddress("beijing");
 Collection<Account> accounts2 = accountService.selectAll(accountCondition);
-/*accounts.size()为 1，里面包含的对象的 account_id 是 3，这说明 account 的条件和父对象 role 的条件同时都生效了*/
+/*accounts.size()为 1，里面包含的对象的 account_id 是 3，这说明 account 的条件和父对象 role 的条件同时生效*/
 ```
 这个特性在 selectOne、count 中同样存在
 
@@ -428,7 +470,7 @@ public class AccountCondition extends Account implements Conditionable {
     }
 }
 ```
-以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在 flying 中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，这种做法的回报率是相当高的。然后我们可以进行测试：
+以上各种条件并非要全部写出，您可以只写出业务需要的条件（变量名可以是任意的，只要条件标注准确即可）。在 flying 中进行复杂条件查询前需要先按需求写一些条件代码，但请您相信，从长远来看这种做法的回报率是极高的。然后我们可以进行测试：
 ```
 /*查询名称中带有"a"的帐户数量*/
 AccountCondition condition1 = new AccountCondition();
@@ -482,12 +524,12 @@ AccountCondition condition8 = new AccountCondition();
 condition8.setAddressIsNull(true);
 int count8 = accountService.count(condition8);
 
-/*最后我们查询名称中带有"a"且地址以"bei"开头的帐户的数量*/
+/*最后我们查询名称中带有"a"且地址为"beijing"的帐户的数量*/
 AccountCondition conditionX = new AccountCondition();
 conditionX.setNameLike("a");
-conditionX.setAddressHeadLike("bei");
+conditionX.setAddress("beijing");
 int countX = accountService.count(conditionX);
-/*这个用例说明所有条件变量都是可以组合使用的*/
+/*这个用例说明条件变量也可以使用 pojo 本身的字段进行查询*/
 ```
 ## [limiter & sorter](#Index)
 在之前的 selectAll 查询中我们都是取符合条件的所有值，但在实际业务需求中很少会这样做，更多的情况是我们会有一个数量限制。同时我们还会希望结果集是经过某种条件排序，甚至是经过多种条件排序的，幸运的是 flying 已经为此做好了准备。
@@ -573,7 +615,7 @@ Collection<Account> collection = accountService.selectAll(condition);
 
 /*下面这句代码就将查询结果封装为了 Page<?> 对象*/
 Page<Account> page = new Page<>(collection, condition.getLimiter());
-/*需要注意的是上面的入参 condition.getLimiter() 是不能用其它 PageParam 对象代替的，因为在之前执行 selectAll 时会将一些信息保存到 condition.getLimiter() 中*/
+/*需要注意的是上面的入参 condition.getLimiter() 是不能用其它任意 PageParam 对象代替的，因为在之前执行 selectAll 时已经将一些信息保存到 condition.getLimiter() 中*/
 ```
 假设总的数据有 21 条，则 `page.getTotalCount()` 为 21，`pagegetMaxPageNum()` 为 3，`page.getPageNo()` 为 1，`page.getPageItems()` 为第一到第十条数据的集合。
 ## [乐观锁](#Index)
@@ -612,7 +654,9 @@ private String password;
 ```
 这样我们将 `password` 这个字段加上了一个忽略标记 `noPassword`，然后在查询 account 表时相关 flying 特征值最后加上 `:noPassword` 就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
 ```
-<select id="selectOne" resultMap="result">flying:selectOne:noPassword</select>
+<select id="selectOne" resultMap="result">
+    flying:selectOne:noPassword
+</select>
 ```
 然后，可通过代码验证 `password` 属性已被忽略
 ```
@@ -628,23 +672,27 @@ account.setPassword("654321");
 accountService.update(account);
 /*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
 ```
-另一种场景是查询对象中有一个长度很大的属性，例如我们在数据库中有一个类型为 VARCHAR(3000) 的属性 `detail`，为性能考虑，在不需要查看细节的情况下我们不想将其 select 出来，而忽略标记就可以做到这一点。我们在 account.java 中增加如下代码：
+另一种场景是查询对象中有一个长度很大的属性，例如我们在数据库中有一个类型为 varchar 长度为 3000 的属性 `detail`，为性能考虑，在不需要查看 `detail` 详情的情况下我们不想将其 select 出来，而忽略标记就可以做到这一点。我们在 account.java 中增加如下代码：
 ```
 @FieldMapperAnnotation(dbFieldName = "detail", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noDetail" })
 private String detail;
 /*相关的getter和setter方法请自行补充*/
 ```
-此时用 flying 特征值为 `flying:select:noDetail` 的方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，例如直接用 `flying:select`。
+此时用 flying 特征值为 `flying#{?}:select:noDetail` 的方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，例如直接用 `flying#{?}:select`。
 
 如果我们想既不查询 `detail` 又不查询 `password`，可在 `password` 的注解上使用多个忽略标记，就像下面这样：
 ```
 @FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword", "noDetail" })
 private String password;
 ```
-这时特征值 `flying:select:noDetail` 就既忽略 `detail` 又忽略 `password`。
-由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会被查询到；但是 flying 特征值每次只能激活一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
+这时特征值 `flying#{?}:select:noDetail` 就既忽略 `detail` 又忽略 `password`。
+由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会参与查询；但是 flying 特征值每次只能激活一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
 
-最后，flying 特征值中的忽略标记没有传递性，只对当前查询对象有效而对自动查询的父对象无效。例如对 `Account` 对象的 `flying:select:noPassword` 查询，其忽略标记对自动查询的父对象 `Role` 无效，哪怕 `Role` 中有 `ignoreTag` 等于 'noPassword' 的属性也会查询出来。如果您需要激活自动查询的父对象中的忽略标记，您需要调整 `<resultMap>` 中的 `<association>` 的设置，具体可以参考我们提供的 demo。
+最后，flying 特征值中的忽略标记没有传递性，只对当前查询对象有效而对自动查询的父对象无效。例如对 `Account` 对象的 `flying#{?}:select:noPassword` 查询，其忽略标记对自动查询的父对象 `Role` 无效，哪怕 `Role` 中有 `ignoreTag` 等于 'noPassword' 的属性也会查询出来。如果您需要激活自动查询的父对象中的忽略标记，您需要调整 `<resultMap>` 中的 `<association>` 的设置，让其指向一个激活了忽略标记的查询，例如：
+```
+<association property="role" javaType="Role" select="myPackage.RoleMapper.selectIgnore_" column="fk_role_id" />
+```
+如果您既需要带有激活忽略标记的自动查询父对象又需要不带激活忽略标记的自动查询父对象，那您为查询对象定义多个 `resultMap` 即可。
 ### [复数外键](#Index)
 有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
 ```
@@ -673,7 +721,7 @@ Collection<Account> accounts = accountService.selectAll(condition);
 ### [常见问题](#Index)
 1、<i>pojo_mapper</i>.xml 中的 flying#{?}:select 是什么？
 
-A：这是 flying 的特征描述值，如果您想用 flying 管理一个数据库操作，就用这行值替代原本应该写的 sql 语句，它的格式使用 linux 风格描述如下：
+A：这是 flying 的特征值描述，如果您想用 flying 管理一个数据库操作，就用这行值替代原本应该写的 sql 语句，它的格式使用 linux 风格描述如下：
 ```
 flying#{?}:select[:<ignoreTag>]
 ```
@@ -684,15 +732,15 @@ flying:{selectOne|selectAll|count|insert|update|updatePersistent|delete}[:<ignor
 在第一个“:”之前的部分是 flying 的标识符，为避免复数外键时的缓存问题，当您使用 select 操作时需在 flying 后面加上 #{?}，当您使用其它类型操作时不需要加 #{?}。
 
 第一个“:”和第二个 : 之间的部分是 flying 操作数据的方法，目前支持的方法有：
-select （按主键查询，并返回结果集中的对象）
-selectOne （按条件对象查询，只返回结果集中的第一个对象）
-selectAll （按条件对象查询，返回结果集中所有对象组成的集合）
-count （按条件对象查询，返回结果数量）
-insert （按参数对象增加一条记录）
-update （按参数对象中的非 null 属性更新一条记录，以参数主键为准）
-updatePersistent （按参数对象中的所有属性更新一条记录，以参数主键为准，此操作会把参数对象为 null 属性在数据库中也更新为 null）
-delete （按参数对象的主键删除一条记录）
-其它的方法还在评估之中，如果您有想法也可以告诉我。
+`select`：按主键查询，并返回结果集中的对象；
+`selectOne`：按条件对象查询，只返回结果集中的第一个对象；
+`selectAll`：按条件对象查询，返回结果集中所有对象组成的集合；
+`count`：按条件对象查询，返回结果数量；
+`insert`：按参数对象增加一条记录；
+`update`：按参数对象中的非 null 属性更新一条记录，以参数主键为准；
+`updatePersistent`：按参数对象中的所有属性更新一条记录，以参数主键为准，此操作会把参数对象为 null 属性在数据库中也更新为 null；
+`delete`：按参数对象的主键删除一条记录；
+其它的方法还在评估之中，如果您有想法也可以告诉我们。
 
 第二个“:”之后的部分是忽略标记，忽略标记是可选的。在 select、selectAll、selectOne 类型操作中如果配置了忽略标记，会使返回结果的类定义中配置了相同忽略标记的变量不被查询出来。在其它类型操作中配置忽略标记没有效果。
 
