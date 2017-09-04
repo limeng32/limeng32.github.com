@@ -55,7 +55,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在 flying 特征值描述部分会有解释。](#FAQ)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在 flying 特征值描述部分会有解释。](#flying-%E7%89%B9%E5%BE%81%E5%80%BC%E6%8F%8F%E8%BF%B0)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
