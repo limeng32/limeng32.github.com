@@ -691,8 +691,7 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 
-    <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" />
+    <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" />
 	<bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
 		<property name="dataSource" ref="dataSource2" />
@@ -709,6 +708,7 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 ```
 以上配置文件中描述了两个数据源 `dataSource1` 和 `dataSource2` 以及它们对应的 `sqlSessionFactory` 和 `mapperScannerConfigurer`，至于最后的 `applicationContextProvder`，它的具体代码是：
 ```
+package indi.demo.flying;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -728,9 +728,65 @@ public class ApplicationContextProvider implements ApplicationContextAware {
 ```
 这个 `ApplicationContextProvider` 的作用我们后面就会看到。之后我们还要替换 Account 类中 role 属性的注解，如下所示：
 ```
-@FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationTypeHandler = myPackage.typeHandler.AccountTypeHandler.class)
-private Role role;
+    @FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationTypeHandler = myPackage.typeHandler.RoleTypeHandler.class)
+    private Role role;
 ```
+这实际上是将原本的 `dbAssociationUniqueKey` 替换为 `dbAssociationTypeHandler`，而 `dbAssociationTypeHandler` 需要指定一个类作为值，所以我们还要开发一个 RoleTypeHandler，如下：
+```
+package myPackage.typeHandler;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
+import org.apache.ibatis.type.TypeHandler;
+import indi.demo.flying.ApplicationContextProvider;
+import myPackage.Role;
+import myPackage.RoleService;
+
+@MappedTypes({ Role.class })
+public class RoleTypeHandler extends BaseTypeHandler<Role> implements TypeHandler<Role> {
+	@Override
+	public Role getNullableResult(ResultSet arg0, String arg1) throws SQLException {
+		if (arg0.getString(arg1) == null) {
+			return null;
+		}
+		return (getService().mySelect(arg0.getString(arg1)));
+	}
+	@Override
+	public Role getNullableResult(ResultSet arg0, int arg1) throws SQLException {
+		if (arg0.getString(arg1) == null) {
+			return null;
+		}
+		return (getService().mySelect(arg0.getString(arg1)));
+	}
+	@Override
+	public Role getNullableResult(CallableStatement arg0, int arg1) throws SQLException {
+		if (arg0.getString(arg1) == null) {
+			return null;
+		}
+		return (getService().mySelect(arg0.getString(arg1)));
+	}
+	@Override
+	public void setNonNullParameter(PreparedStatement arg0, int arg1, Role arg2, JdbcType arg3) throws SQLException {
+		if (arg2 != null) {
+			arg0.setString(arg1, arg2.getId());
+		}
+	}
+
+	/*
+	 * 因为此TypeHandler并非第一时间初始化，不能以@Autowired方式调用RoleService，所以采用下面的方式
+	 */
+	private RoleService getService() {
+		return (RoleService) ApplicationContextProvider.getApplicationContext().getBean(RoleService.class);
+	}
+}
+```
+如果您对这个类的代码不是很熟悉，您可以了解一下 mybatis 自定义 TypeHandler 的机制。另外，您可以看到我们之前开发的 `ApplicationContextProvider` 在此处发挥了作用。
+
+最后
 ## [其它](#Index)
 ### [ignore tag](#Index)
 有时候，我们希望在查询中忽略某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
