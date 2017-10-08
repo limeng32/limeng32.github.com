@@ -784,14 +784,14 @@ public class RoleTypeHandler extends BaseTypeHandler<Role> implements TypeHandle
 	}
 }
 ```
-如果您对这个类的代码不是很熟悉，您可以了解一下 mybatis 自定义 TypeHandler 的机制。另外，您可以看到我们之前开发的 `ApplicationContextProvider` 在此处发挥了作用。最后，我们还要将 account.xml 中的 resultMap，如下所示：
+如果您对这个类的代码不是很熟悉，您可以了解一下 mybatis 自定义 TypeHandler 的机制。另外，您可以看到我们之前开发的 `ApplicationContextProvider` 在此处发挥了作用。最后，我们还要修改 account.xml 中的 resultMap，如下所示：
 ```
     <resultMap id="result" type="Account" autoMapping="true">
         <id property="id" column="account_id" />
         <result property="role" typeHandler="myPackage.typeHandler.RoleTypeHandler" column="fk_role_id" />
     </resultMap>
 ```
-即把 result 中原先的 association 方式替换为 typeHandler 方式，关于 association 方式和 typeHandler 方式的比较，您可以参考这里。
+以上是把 resultMap 中的 association 方式替换为 typeHandler 方式，关于 association 方式和 typeHandler 方式的区别，您可以参考这里。
 
 现在，您就可以使用如下代码来操作跨库的 Account 和 Role 对象了：
 ```
@@ -812,7 +812,7 @@ accountService.update(account);
 ```
 然而跨库关联毕竟不同于同库关联，它无法做到将父对象除主键外的其它属性作为条件参与查询。实际上这是由于数据库的限制，目前大部分的数据库还不支持跨库的外键关联查询，更不用说是跨库异构数据库（例如一边是 oracle 另一边是 mysql）。当然对于支持跨库外键关联查询的数据库，我们也会考虑支持它的特性。
 
-最后，这里有一个跨库应用的代码示例 https://github.com/limeng32/flying-demo2 ，详细您看完以后会对 flying 实现跨库的方法了然于胸。
+最后，这里有一个跨库应用的[代码示例](#https://github.com/limeng32/flying-demo2)，详细您看完以后会对 flying 实现跨库的方法了然于胸。
 ## [其它](#Index)
 ### [ignore tag](#Index)
 有时候，我们希望在查询中忽略某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
