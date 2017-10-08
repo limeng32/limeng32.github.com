@@ -674,36 +674,43 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 ## [跨库](#Index)
 `最新版本新增` 在实际开发中，越来越多的系统采用分布式数据库设计，flying 对此也有解决方案。flying 采用的并非动态切换虚拟数据源方式，而是采用真实数据源配合自定义 TypeHandler 的方式，这样做的好处如下：
 - 动态切换虚拟数据源方式需要频繁切换数据源，而真实数据源方式本身就是多个数据源无需切换，避免了这方面的开销。
-- 动态切换虚拟数据源方式配置比较复杂，需要增加多处 spring 配置，并且多数据源和单数据源实现方式差异较大，用户如果从单数据源升级至多数据源需要变更很多内容；而采用真实数据源配合自定义 TypeHandler 的方式，完全利用了 mybatis 自身支持多数据源特性，将单数据源看做多数据源的一种特例，每次新增数据源的配置都很少且易于理解。
+- 动态切换虚拟数据源方式多数据源和单数据源实现方式差异较大，用户如果从单数据源升级至多数据源需要变更很多内容；而采用真实数据源配合自定义 TypeHandler 的方式，完全利用了 mybatis 自身支持多数据源特性，将单数据源看做多数据源的一种特例，每次新增数据源的配置都很少且易于理解。
 - flying 对真实数据源配合自定义 TypeHandler 的方式进行了优化，当您在业务代码中调用数据时您完全不需要知道哪些是跨库调用哪些是同库调用，您也感知不到它们的不同。
 
 为了更好的说明 flying 跨库实现方式，在本小节中，我们假定 Account 表和 Role 表处于不同的数据源内，前者的数据源为 dataSource1，后者的数据源为 dataSource2。因此 spring 中的配置如下：
 ```
-<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" />
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
 		<property name="dataSource" ref="dataSource1" />
 		<property name="mapperLocations" value="classpath*:indi/demo/flying/mapper/*.xml" />
 		<property name="typeAliasesPackage" value="indi.demo.flying" />
 	</bean>
-
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="indi.demo.flying.mapper" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 
+    <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" />
 	<bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
 		<property name="dataSource" ref="dataSource2" />
 		<property name="mapperLocations" value="classpath*:indi/demo/flying/mapper2/*.xml" />
 		<property name="typeAliasesPackage" value="indi.demo.flying" />
 	</bean>
-
 	<bean id="mapperScannerConfigurer2" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="basePackage" value="indi.demo.flying.mapper2" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory2" />
 	</bean>
 
+<!--因为TypeHandler并非第一时间初始化，不能以@Autowired方式调用Bean，所以增加ApplicationContextProvider方式来调用Bean-->
 	<bean id="applicationContextProvder" class="indi.demo.flying.ApplicationContextProvider" />
+```
+以上配置文件中描述了两个数据源 `dataSource1` 和 `dataSource2` 以及它们对应的 `sqlSessionFactory` 和 `mapperScannerConfigurer`，至于最后的 `applicationContextProvder`，它的具体代码是：
+```
+
 ```
 ## [其它](#Index)
 ### [ignore tag](#Index)
