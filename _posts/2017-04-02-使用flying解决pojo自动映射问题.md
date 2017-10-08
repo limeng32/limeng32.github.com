@@ -20,13 +20,13 @@ category: blog
   - [ignore tag](#ignore-tag)
   - [复数外键](#%E5%A4%8D%E6%95%B0%E5%A4%96%E9%94%AE)
 - [附录](#%E9%99%84%E5%BD%95)
-  - [常见问题](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
+  - [<font color="red">常见问题</font>](#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98)
   - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [AccountService 的实现方式](#accountservice-%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F)
 
 ## [Hello World](#Index)
-上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。<font color="red">a</font>
+上一篇文章中我们介绍了 flying 的基本情况，在展示第一个 demo 之前还需要做一些额外的工作，即描述您想让 mybatis 管理的数据的表结构。
 
 无论是否使用 flying 插件，对于每一个由 mybatis 托管的表，都要有一个 <i>pojo_mapper</i>.xml 来告诉 mybatis 这个表的基本信息。在以往这个配置文件可能会因为 sql 片段而变得非常复杂，但加入 flying 插件后，这个配置文件中将不需要 sql 片段，变得精简而统一。下面是 [一个有代表性的 account 表](#AccountTableCreater) 以及对应它的配置文件 account.xml ：
 ``` 
@@ -55,7 +55,7 @@ public interface AccountMapper {
     public Account selectOne(Account t);
 }
 ```
-到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在 flying 特征值描述部分会有解释。](#flying-%E7%89%B9%E5%BE%81%E5%80%BC%E6%8F%8F%E8%BF%B0)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
+到目前为止一切都和不使用 flying 时一模一样，您可能奇怪的地方是：account.xml 中的 select 和 selectOne 方法描述中的 flying#{?}:select 是什么。这是这条查询的 flying 特征值描述，[在 flying 特征值描述部分会有解释。](#FAQ)马上我们就会在对象实体 Account 中看到更多不一样的地方，Account.java 的代码如下：
 ```
 package myPackage;
 import org.apache.ibatis.type.JdbcType;
