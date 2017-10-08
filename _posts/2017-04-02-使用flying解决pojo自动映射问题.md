@@ -672,7 +672,9 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
 ## [跨库](#Index)
-`New` 
+`最新版本新增` 在实际开发中，越来越多的系统采用分布式数据库设计，flying 对此也有解决方案。flying 采用的并非动态切换虚拟数据源方式，而是采用真实数据源配合 TypeHandler 的方式，这样做的好处如下：
++ 啊
++ B
 
 ## [其它](#Index)
 ### [ignore tag](#Index)
