@@ -679,16 +679,15 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 
 为了更好的说明 flying 跨库实现方式，在本小节中，我们假定 Account 表和 Role 表处于不同的数据源内，前者的数据源为 dataSource1，后者的数据源为 dataSource2。因此 spring 中的配置如下：
 ```
-    <bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" />
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" />
+        <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
 		<property name="dataSource" ref="dataSource1" />
-		<property name="mapperLocations" value="classpath*:indi/demo/flying/mapper/*.xml" />
-		<property name="typeAliasesPackage" value="indi.demo.flying" />
+		<property name="mapperLocations" value="classpath*:myPackage/mapper/*.xml" />
+		<property name="typeAliasesPackage" value="myPackage" />
 	</bean>
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="indi.demo.flying.mapper" />
+		<property name="basePackage" value="myPackage" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 
@@ -697,20 +696,40 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 	<bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:Configuration.xml" />
 		<property name="dataSource" ref="dataSource2" />
-		<property name="mapperLocations" value="classpath*:indi/demo/flying/mapper2/*.xml" />
-		<property name="typeAliasesPackage" value="indi.demo.flying" />
+		<property name="mapperLocations" value="classpath*:myPackage/mapper2/*.xml" />
+		<property name="typeAliasesPackage" value="myPackage" />
 	</bean>
 	<bean id="mapperScannerConfigurer2" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="indi.demo.flying.mapper2" />
+		<property name="basePackage" value="myPackage" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory2" />
 	</bean>
 
-<!--因为TypeHandler并非第一时间初始化，不能以@Autowired方式调用Bean，所以增加ApplicationContextProvider方式来调用Bean-->
+        <!--因为TypeHandler并非第一时间初始化，不能以@Autowired方式调用Bean，所以增加ApplicationContextProvider方式来调用Bean-->
 	<bean id="applicationContextProvder" class="indi.demo.flying.ApplicationContextProvider" />
 ```
 以上配置文件中描述了两个数据源 `dataSource1` 和 `dataSource2` 以及它们对应的 `sqlSessionFactory` 和 `mapperScannerConfigurer`，至于最后的 `applicationContextProvder`，它的具体代码是：
 ```
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
+public class ApplicationContextProvider implements ApplicationContextAware {
+	private static ApplicationContext context;
+
+	public static ApplicationContext getApplicationContext() {
+		return context;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+		context = ctx;
+	}
+}
+```
+这个 `ApplicationContextProvider` 的作用我们后面就会看到。之后我们还要替换 Account 类中 role 属性的注解，如下所示：
+```
+@FieldMapperAnnotation(dbFieldName = "fk_role_id", jdbcType = JdbcType.INTEGER, dbAssociationTypeHandler = myPackage.typeHandler.AccountTypeHandler.class)
+private Role role;
 ```
 ## [其它](#Index)
 ### [ignore tag](#Index)
