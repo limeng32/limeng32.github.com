@@ -175,6 +175,8 @@ public interface RoleMapper {
 
 当您所有的 <i>pojo_mapper</i>.java 都按以上情况配置好后，flying 优化 mybatis 二级缓存的工作就完成了，现在您可以放心的使用 mybatis 的自带缓存，而不用担心任何缓存与数据库不匹配的问题。
 
+## [跨数据源缓存](#Index)
+
 ## [注意事项](#Index)
 
 ### [flying 如何判断缓存是否命中](#Index)
@@ -184,6 +186,9 @@ flying 的缓存的 key 值是由查询条件 pojo 按业务属性序列化后�
 不会生成。因为在您正确设计事务的情况下，未提交的（即被回滚）的数据变化是不会被查询到的，没有查询就不会生成缓存，所以您的缓存永远会和您的数据库保持一致，您可以放心的在有事务逻辑的系统中使用 flying 优化过的 mybatis 二级缓存。
 
 ## [附录](#Index)
+<a id="flying-demo2"></a>
+### [代码示例](#Index)
+为了您更方便的使用 flying 进行优化 mybatis 二级缓存，我们提供了一个 [跨数据源并使用二级缓存的代码示例](https://github.com/limeng32/flying-demo2) 供您查看。
 <a id="AccountTableCreater"></a>
 ### [account 表建表语句](#Index)
 ```
