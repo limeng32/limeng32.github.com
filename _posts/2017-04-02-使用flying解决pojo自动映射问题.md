@@ -743,13 +743,13 @@ condition.setSecondRole(secondRole);
 Collection<Account> accounts = accountService.selectAll(condition);
 ```
 可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
-### [跨库](#Index)
+### [跨数据源](#Index)
 `最新版本新增` 在实际开发中，越来越多的系统采用分布式数据库设计，flying 对此也有解决方案。flying 采用的并非动态切换虚拟数据源方式，而是采用真实数据源配合自定义 TypeHandler 的方式，这样做的好处如下：
 - 动态切换虚拟数据源方式需要频繁切换数据源，而真实数据源方式本身就是多个数据源无需切换，避免了这方面的开销。
 - 动态切换虚拟数据源方式多数据源和单数据源实现差异较大，用户如果从单数据源升级至多数据源需要变更很多内容；而采用真实数据源配合自定义 TypeHandler 的方式，完全利用了 mybatis 自身支持多数据源特性，将单数据源看做多数据源的一种特例，每次新增数据源的配置都很少且易于理解。
-- flying 对真实数据源配合自定义 TypeHandler 的方式进行了优化，当您在业务代码中调用数据时您不需要知道哪些是跨库调用哪些是同库调用，您也基本感知不到它们的不同。
+- flying 对真实数据源配合自定义 TypeHandler 的方式进行了优化，当您在业务代码中调用数据时您不需要知道哪些是跨数据源调用哪些是同数据源调用，您也基本感知不到它们的不同。
 
-为了更好的说明 flying 跨库实现方式，在本小节中，我们假定 Account 表和 Role 表处于不同的数据源内，前者的数据源为 dataSource1，后者的数据源为 dataSource2。因此 spring 中的配置如下：
+为了更好的说明 flying 跨数据源实现方式，在本小节中，我们假定 Account 表和 Role 表处于不同的数据源内，前者的数据源为 dataSource1，后者的数据源为 dataSource2。因此 spring 中的配置如下：
 ```
     <bean id="dataSource1" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" />
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
@@ -865,26 +865,26 @@ public class RoleTypeHandler extends BaseTypeHandler<Role> implements TypeHandle
 ```
 以上是把 resultMap 中的 association 方式替换为 typeHandler 方式，关于 association 方式和 typeHandler 方式的区别，您可以参考这里。
 
-现在，您就可以使用如下代码来操作跨库的 Account 和 Role 对象了：
+现在，您就可以使用如下代码来操作跨数据源的 Account 和 Role 对象了：
 ```
-/* 跨库时，也可以新建关联了父对象的子对象 */
+/* 跨数据源时，也可以新建关联了父对象的子对象 */
 Account newAccount = new Account();
 newAccount.setRole(role);
 accountService.insert(newAccount);
 /* 此时数据库中新增的newAccount已于另一数据源的role关联起来 */
 
-/* 跨库时，子对象查询时也可自动加载父对象 */
+/* 跨数据源时，子对象查询时也可自动加载父对象 */
 Account account = accountService.select(newAccount.getId());
 /* 此时account.getRole()的值即account关联的处于另一数据源的role */
 
-/* 跨库时，子对象也可更新父对象 */
+/* 跨数据源时，子对象也可更新父对象 */
 account.setRole(otherRole);
 accountService.update(account);
 /* 此时数据库中account和另一数据源的otherRole关联起来 */
 ```
-然而跨库关联毕竟不同于同库关联，它无法做到将父对象除主键外的其它属性作为条件参与查询。实际上这是由于数据库的限制，目前大部分的数据库还不支持跨库的外键关联查询，更不用说是跨库异构数据库（例如一边是 oracle 另一边是 mysql）。当然对于支持跨库外键关联查询的数据库，我们也会考虑支持它的特性。
+然而跨数据源关联毕竟不同于同数据源关联，它无法做到将父对象除主键外的其它属性作为条件参与查询。实际上这是由于数据库的限制，目前大部分的数据库还不支持跨数据源的外键关联查询，更不用说是跨数据源异构数据库（例如一方是 oracle 另一方是 mysql）。当然对于支持跨数据源外键关联查询的数据库（例如使用了 mysql 的 federated 引擎），我们在今后也会考虑支持它的特性。
 
-最后，这里有一个跨库应用的 [代码示例](https://github.com/limeng32/flying-demo2)，详细您看完以后会对 flying 实现跨库的方法了然于胸。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
+最后，这里有一个跨数据源应用的 [代码示例](https://github.com/limeng32/flying-demo2)，详细您看完以后会对 flying 实现跨数据源的方法了然于胸。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
