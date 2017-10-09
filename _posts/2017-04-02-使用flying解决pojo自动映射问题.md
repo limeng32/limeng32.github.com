@@ -896,7 +896,7 @@ A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段�
 
 <a id="association-or-typeHandler"></a>
 2、`最新版本新增` resultMap 中 association 和 typeHandler 两种方式的区别？
-A：在单数据源情况下，这两种方式都可以实现“查询子对象时自动加载父对象”的需要；但在多数据源的情况下，只有 typeHandler 方式才能实现跨数据源关联。我们的建议是只使用 typeHandler 方式，因为如果您打算使用 mybatis 的二级缓存（在下一篇文章中会详细讲解），在多数据源环境下只有全部 resultMap 都采用 typeHandler 才能保证缓存完全一致性。
+A：在单数据源情况下，这两种方式都可以实现“查询子对象时自动加载父对象”的需要；但在多数据源的情况下，只有 typeHandler 方式才能实现跨数据源关联。我们的建议是只使用 typeHandler 方式，因为如果您打算使用 mybatis 的二级缓存，在多数据源环境下只有全部 resultMap 都采用 typeHandler 才能保证缓存完全一致性。（在下一篇文章中会详细讲解）
 <a id="AccountTableCreater"></a>
 ### [代码示例](#Index)
 为了您更方便的使用 flying 进行开发，我们提供了一个[覆盖了本文大部分功能的单数据源的代码示例](https://github.com/limeng32/flying-demo)。如果您是对跨数据源感兴趣，则您应该关注[这里](#flying-demo2)。
