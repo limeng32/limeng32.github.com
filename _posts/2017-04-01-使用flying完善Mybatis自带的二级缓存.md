@@ -176,6 +176,9 @@ public interface RoleMapper {
 当您所有的 <i>pojo_mapper</i>.java 都按以上情况配置好后，flying 优化 mybatis 二级缓存的工作就完成了，现在您可以放心的使用 mybatis 的自带缓存，而不用担心任何缓存与数据库不匹配的问题。
 
 ## [跨数据源缓存](#Index)
+`最新版本新增` flying采用真实数据源配合自定义 TypeHandler 的方式来实现跨数据源，并可以将多个数据源的数据保存至同一缓存中，这一切都是自动完成的，您只需要给每个 <i>pojo_mapper</i>.java 都配置上合适的注解就能实现这一点，最终在缓存层面实现数据统一。
+
+有一点需要注意的是，在跨数据源且使用二级缓存时，您在 <i>pojo_mapper</i>.xml 中的 resultMap 只能以 typeHandler 方式实现多对一，而不能以 association 方式。关于这一点，您可以阅读[上一篇文章中的跨数据源](http://flying-doc.limeng32.com/%E4%BD%BF%E7%94%A8flying%E8%A7%A3%E5%86%B3pojo%E8%87%AA%E5%8A%A8%E6%98%A0%E5%B0%84%E9%97%AE%E9%A2%98#%E8%B7%A8%E6%95%B0%E6%8D%AE%E6%BA%90)部分。
 
 ## [注意事项](#Index)
 
@@ -188,7 +191,7 @@ flying 的缓存的 key 值是由查询条件 pojo 按业务属性序列化后�
 ## [附录](#Index)
 <a id="flying-demo2"></a>
 ### [代码示例](#Index)
-为了您更方便的使用 flying 进行优化 mybatis 二级缓存，我们提供了一个 [跨数据源并使用二级缓存的代码示例](https://github.com/limeng32/flying-demo2) 供您查看。
+`最新版本新增` 为了您更方便的使用 flying 进行优化 mybatis 二级缓存，我们提供了一个 [跨数据源并使用二级缓存的代码示例](https://github.com/limeng32/flying-demo2) 供您查看。
 <a id="AccountTableCreater"></a>
 ### [account 表建表语句](#Index)
 ```
