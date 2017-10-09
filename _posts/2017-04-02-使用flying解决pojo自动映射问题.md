@@ -336,7 +336,7 @@ private Role role;
 ```   
 <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" /> 
 ```
-写出以上信息后，flying 在配置文件层面已经完全理解了数据结构。
+写出以上信息后，flying 在配置文件层面已经完全理解了数据结构。（此处除 association 之外还有另一种使用 typeHandler 的解决方案，具体可以参见 [跨数据源](#%E8%B7%A8%E6%95%B0%E6%8D%AE%E6%BA%90) 一节。）
 
 最后总结一下，完整版的 `account.xml` 如下：
 ``` 
@@ -887,7 +887,7 @@ accountService.update(account);
 然而跨数据源关联毕竟不同于单数据源，它无法做到将父对象除主键外的其它属性作为条件参与查询。实际上这是由于数据库的限制，目前大部分的数据库还不支持跨数据源的外键关联查询，更不用说是跨数据源异构数据库（例如一方是 oracle 另一方是 mysql）。当然对于支持跨数据源外键关联查询的数据库（例如使用了 mysql 的 federated 引擎），我们在今后也会考虑支持它的特性。
 
 <a id="flying-demo2"></a>
-最后，这里有一个[跨数据源应用的代码示例](https://github.com/limeng32/flying-demo2)，详细您看完以后会对 flying 实现跨数据源的方法了然于胸。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
+最后，这里有一个[跨数据源应用的代码示例](https://github.com/limeng32/flying-demo2)，相信您看完以后会对 flying 实现跨数据源的方法了然于胸。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中进行详细介绍）
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
@@ -898,6 +898,7 @@ A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段�
 
 <a id="association-or-typeHandler"></a>
 2、`最新版本新增` resultMap 中 association 和 typeHandler 两种方式的区别？
+
 A：在单数据源情况下，这两种方式都可以实现“查询子对象时自动加载父对象”的需要；但在多数据源的情况下，只有 typeHandler 方式才能实现跨数据源关联。我们的建议是只使用 typeHandler 方式，因为如果您打算使用 mybatis 的二级缓存，在多数据源环境下只有全部 resultMap 都采用 typeHandler 才能保证缓存完全一致性。（在下一篇文章中会详细讲解）
 <a id="AccountTableCreater"></a>
 ### [代码示例](#Index)
