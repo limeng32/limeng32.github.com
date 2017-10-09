@@ -757,26 +757,26 @@ Collection<Account> accounts = accountService.selectAll(condition);
 	<property name="dataSource" ref="dataSource1" />
 	<property name="mapperLocations" value="classpath*:myPackage/mapper/*.xml" />
 	<property name="typeAliasesPackage" value="myPackage" />
-</bean>
-<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    </bean>
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	<property name="basePackage" value="myPackage" />
 	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
-</bean>
+    </bean>
 
     <bean id="dataSource2" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" />
-<bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <bean id="sqlSessionFactory2" class="org.mybatis.spring.SqlSessionFactoryBean">
 	<property name="configLocation" value="classpath:Configuration.xml" />
 	<property name="dataSource" ref="dataSource2" />
 	<property name="mapperLocations" value="classpath*:myPackage/mapper2/*.xml" />
 	<property name="typeAliasesPackage" value="myPackage" />
-</bean>
-<bean id="mapperScannerConfigurer2" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    </bean>
+    <bean id="mapperScannerConfigurer2" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	<property name="basePackage" value="myPackage" />
 	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory2" />
-</bean>
+    </bean>
 
     <!--因为TypeHandler并非第一时间初始化，不能以@Autowired方式调用Bean，所以增加ApplicationContextProvider方式来调用Bean-->
-<bean id="applicationContextProvder" class="indi.demo.flying.ApplicationContextProvider" />
+    <bean id="applicationContextProvder" class="indi.demo.flying.ApplicationContextProvider" />
 ```
 以上配置文件中描述了两个数据源 `dataSource1` 和 `dataSource2` 以及它们对应的 `sqlSessionFactory` 和 `mapperScannerConfigurer`，至于最后的 `applicationContextProvder`，它的具体代码是：
 ```
