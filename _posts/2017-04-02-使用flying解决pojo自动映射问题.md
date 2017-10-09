@@ -884,6 +884,7 @@ accountService.update(account);
 ```
 然而跨数据源关联毕竟不同于单数据源，它无法做到将父对象除主键外的其它属性作为条件参与查询。实际上这是由于数据库的限制，目前大部分的数据库还不支持跨数据源的外键关联查询，更不用说是跨数据源异构数据库（例如一方是 oracle 另一方是 mysql）。当然对于支持跨数据源外键关联查询的数据库（例如使用了 mysql 的 federated 引擎），我们在今后也会考虑支持它的特性。
 
+<a id="flying-demo2"></a>
 最后，这里有一个[跨数据源应用的 代码示例](https://github.com/limeng32/flying-demo2)，详细您看完以后会对 flying 实现跨数据源的方法了然于胸。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
 ## [附录](#Index)
 <a id="FAQ"></a>
@@ -894,7 +895,7 @@ A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段�
 
 <a id="AccountTableCreater"></a>
 ### [代码示例](#Index)
-为了您更方便的使用 flying 进行开发，我们提供了一个[覆盖了本文大部分功能的单数据源的代码示例](https://github.com/limeng32/flying-demo)。如果您是对跨数据源感兴趣，则您应该关注[这里](https://github.com/limeng32/flying-demo2)。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
+为了您更方便的使用 flying 进行开发，我们提供了一个[覆盖了本文大部分功能的单数据源的代码示例](https://github.com/limeng32/flying-demo)。如果您是对跨数据源感兴趣，则您应该关注[这里](#flying-demo2)。
 ### [account 表建表语句](#Index)
 ```
 CREATE TABLE account (
