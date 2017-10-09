@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: 使用 flying 解决 pojo 自动映射问题
