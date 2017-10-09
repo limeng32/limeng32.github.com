@@ -671,7 +671,79 @@ delete from account where id = '${id}' and opLock = '${opLock}'
 在实际应用中，可以借助 update、updatePersistent、delete 方法的返回值来判断是否变动了数据（一般来说返回 0 表示没变动，1 表示有变动），继而判断锁是否有效，是否合法（符合业务逻辑），最后决定整个事务是提交还是回滚。
 
 最后我们再来谈谈为什么不建议给乐观锁字段加上 setter 方法。首先在代码中直接修改一个 pojo 的乐观锁值是很危险的事情，它会导致事务逻辑的不可靠；其次乐观锁不参与 select、selectAll、selectOne 方法，即便给它赋值在查询时也不会出现；最后乐观锁不参与 insert 方法，无论给它赋什么值在新增数据中此字段的值都是零，即乐观锁总是从零开始增长。
-## [跨库](#Index)
+## [其它](#Index)
+### [ignore tag](#Index)
+有时候，我们希望在查询中忽略某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
+```
+@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword" })
+private String password;
+/*相关的getter和setter方法请自行补充*/
+```
+这样我们将 `password` 这个字段加上了一个忽略标记 `noPassword`，然后在查询 account 表时相关 flying 特征值最后加上 `:noPassword` 就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
+```
+<select id="selectOne" resultMap="result">
+    flying:selectOne:noPassword
+</select>
+```
+然后，可通过代码验证 `password` 属性已被忽略
+```
+/*查找 name 为 "user" 且 password 为 "123456" 的一个账户*/
+Account condition = new Account();
+condition.setName("user");
+condition.setPassword("123456");
+Account account = accountService.selectOne(condition);
+/*用以上方式是可以查出 passeord 为 "123456" 的账户的，然而结果中 account.getPassword()为 null*/
+
+/* 但是仍然可以更新 password 的值 */
+account.setPassword("654321");
+accountService.update(account);
+/*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
+```
+另一种场景是查询对象中有一个长度很大的属性，例如我们在数据库中有一个类型为 varchar 长度为 3000 的属性 `detail`，为性能考虑，在不需要查看 `detail` 详情的情况下我们不想将其 select 出来，而忽略标记就可以做到这一点。我们在 account.java 中增加如下代码：
+```
+@FieldMapperAnnotation(dbFieldName = "detail", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noDetail" })
+private String detail;
+/*相关的getter和setter方法请自行补充*/
+```
+此时用 flying 特征值为 `flying#{?}:select:noDetail` 的方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，例如直接用 `flying#{?}:select`。
+
+如果我们想既不查询 `detail` 又不查询 `password`，可在 `password` 的注解上使用多个忽略标记，就像下面这样：
+```
+@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword", "noDetail" })
+private String password;
+```
+这时特征值 `flying#{?}:select:noDetail` 就既忽略 `detail` 又忽略 `password`。
+由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会参与查询；但是 flying 特征值每次只能激活一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
+
+最后，flying 特征值中的忽略标记没有传递性，只对当前查询对象有效而对自动查询的父对象无效。例如对 `Account` 对象的 `flying#{?}:select:noPassword` 查询，其忽略标记对自动查询的父对象 `Role` 无效，哪怕 `Role` 中有 `ignoreTag` 等于 'noPassword' 的属性也会查询出来。如果您需要激活自动查询的父对象中的忽略标记，您需要调整 `<resultMap>` 中的 `<association>` 的设置，让其指向一个激活了忽略标记的查询，例如：
+```
+<association property="role" javaType="Role" select="myPackage.RoleMapper.selectIgnore_" column="fk_role_id" />
+```
+如果您既需要带有激活忽略标记的自动查询父对象又需要不带激活忽略标记的自动查询父对象，那您为查询对象定义多个 `resultMap` 即可。
+### [复数外键](#Index)
+有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
+```
+<association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
+```
+然后在 Account.java 中还需要加入以下代码：
+```
+@FieldMapperAnnotation(dbFieldName = "fk_second_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
+private Role secondRole;   
+/*相关的getter和setter方法请自行补充*/
+```
+如此一来表 account 和表 role 就构成了复数外键关系。flying 支持复数外键，您可以像操作普通外键一样操作它，代码如下：
+```
+/*查询角色名称为 "user",同时兼职角色名称为 "super_user" 的账户*/
+Account condition = new Account();
+Role role = new Role(), secondRole = new Role();
+role.setName("user");
+condition.setRole(role);
+secondRole.setName("super_user");
+condition.setSecondRole(secondRole);
+Collection<Account> accounts = accountService.selectAll(condition);
+```
+可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
+### [跨库](#Index)
 `最新版本新增` 在实际开发中，越来越多的系统采用分布式数据库设计，flying 对此也有解决方案。flying 采用的并非动态切换虚拟数据源方式，而是采用真实数据源配合自定义 TypeHandler 的方式，这样做的好处如下：
 - 动态切换虚拟数据源方式需要频繁切换数据源，而真实数据源方式本身就是多个数据源无需切换，避免了这方面的开销。
 - 动态切换虚拟数据源方式多数据源和单数据源实现方式差异较大，用户如果从单数据源升级至多数据源需要变更很多内容；而采用真实数据源配合自定义 TypeHandler 的方式，完全利用了 mybatis 自身支持多数据源特性，将单数据源看做多数据源的一种特例，每次新增数据源的配置都很少且易于理解。
@@ -813,78 +885,6 @@ accountService.update(account);
 然而跨库关联毕竟不同于同库关联，它无法做到将父对象除主键外的其它属性作为条件参与查询。实际上这是由于数据库的限制，目前大部分的数据库还不支持跨库的外键关联查询，更不用说是跨库异构数据库（例如一边是 oracle 另一边是 mysql）。当然对于支持跨库外键关联查询的数据库，我们也会考虑支持它的特性。
 
 最后，这里有一个跨库应用的 [代码示例](https://github.com/limeng32/flying-demo2)，详细您看完以后会对 flying 实现跨库的方法了然于胸。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
-## [其它](#Index)
-### [ignore tag](#Index)
-有时候，我们希望在查询中忽略某个字段的值，但在作为查询条件和更新时要用到这个字段。一个典型的场景是 password 字段，出于安全考虑我们不想在 select 方法返回的结果中看到它的值，但我们需要在查询条件（如判断登录）和更新（如修改密码）时使用到它，这时我们可以在 Account.java 中加入以下代码：
-```
-@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword" })
-private String password;
-/*相关的getter和setter方法请自行补充*/
-```
-这样我们将 `password` 这个字段加上了一个忽略标记 `noPassword`，然后在查询 account 表时相关 flying 特征值最后加上 `:noPassword` 就不会再查找 password 字段，但作为查询条件和更新数据时 password 字段都可以参与进来，如下所示：
-```
-<select id="selectOne" resultMap="result">
-    flying:selectOne:noPassword
-</select>
-```
-然后，可通过代码验证 `password` 属性已被忽略
-```
-/*查找 name 为 "user" 且 password 为 "123456" 的一个账户*/
-Account condition = new Account();
-condition.setName("user");
-condition.setPassword("123456");
-Account account = accountService.selectOne(condition);
-/*用以上方式是可以查出 passeord 为 "123456" 的账户的，然而结果中 account.getPassword()为 null*/
-
-/* 但是仍然可以更新 password 的值 */
-account.setPassword("654321");
-accountService.update(account);
-/*现在 account 对应的数据库中数据的 password 字段值变为 "654321"*/
-```
-另一种场景是查询对象中有一个长度很大的属性，例如我们在数据库中有一个类型为 varchar 长度为 3000 的属性 `detail`，为性能考虑，在不需要查看 `detail` 详情的情况下我们不想将其 select 出来，而忽略标记就可以做到这一点。我们在 account.java 中增加如下代码：
-```
-@FieldMapperAnnotation(dbFieldName = "detail", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noDetail" })
-private String detail;
-/*相关的getter和setter方法请自行补充*/
-```
-此时用 flying 特征值为 `flying#{?}:select:noDetail` 的方法就不会查出 `detail` 字段；如果我们在某些情况又需要得到 `detail` 的内容，再增加一个特征值不带 `:noDetail` 的查询方法即可，例如直接用 `flying#{?}:select`。
-
-如果我们想既不查询 `detail` 又不查询 `password`，可在 `password` 的注解上使用多个忽略标记，就像下面这样：
-```
-@FieldMapperAnnotation(dbFieldName = "password", jdbcType = JdbcType.VARCHAR, ignoreTag = { "noPassword", "noDetail" })
-private String password;
-```
-这时特征值 `flying#{?}:select:noDetail` 就既忽略 `detail` 又忽略 `password`。
-由此可见，在实体类中一个属性可配置多个忽略标记，其中一个被激活这个属性就不会参与查询；但是 flying 特征值每次只能激活一个忽略标记，所以如果您有多样化的忽略需求，您需要在实体类中仔细配置以满足需要。
-
-最后，flying 特征值中的忽略标记没有传递性，只对当前查询对象有效而对自动查询的父对象无效。例如对 `Account` 对象的 `flying#{?}:select:noPassword` 查询，其忽略标记对自动查询的父对象 `Role` 无效，哪怕 `Role` 中有 `ignoreTag` 等于 'noPassword' 的属性也会查询出来。如果您需要激活自动查询的父对象中的忽略标记，您需要调整 `<resultMap>` 中的 `<association>` 的设置，让其指向一个激活了忽略标记的查询，例如：
-```
-<association property="role" javaType="Role" select="myPackage.RoleMapper.selectIgnore_" column="fk_role_id" />
-```
-如果您既需要带有激活忽略标记的自动查询父对象又需要不带激活忽略标记的自动查询父对象，那您为查询对象定义多个 `resultMap` 即可。
-### [复数外键](#Index)
-有时候一个数据实体会有多个多对一关系指向另一个数据实体，例如考虑下面的情况：我们假设每个账户都有一个兼职角色，这样 account 表中就需要另一个字段 fk_second_role_id，而这个字段也是指向 role 表。为了满足这个需要，首先我们要在 account.xml 的 resultMap元素中，加入以下内容：
-```
-<association property="secondRole" javaType="Role" select="myPackage.RoleMapper.select" column="fk_second_role_id" />
-```
-然后在 Account.java 中还需要加入以下代码：
-```
-@FieldMapperAnnotation(dbFieldName = "fk_second_role_id", jdbcType = JdbcType.INTEGER, dbAssociationUniqueKey = "role_id")
-private Role secondRole;   
-/*相关的getter和setter方法请自行补充*/
-```
-如此一来表 account 和表 role 就构成了复数外键关系。flying 支持复数外键，您可以像操作普通外键一样操作它，代码如下：
-```
-/*查询角色名称为 "user",同时兼职角色名称为 "super_user" 的账户*/
-Account condition = new Account();
-Role role = new Role(), secondRole = new Role();
-role.setName("user");
-condition.setRole(role);
-secondRole.setName("super_user");
-condition.setSecondRole(secondRole);
-Collection<Account> accounts = accountService.selectAll(condition);
-```
-可见，复数外键的增删改查等操作与普通外键是类似的，只需要注意虽然 secondRole 的类型为Role，但它的 getter、setter 是 getSecondRole()、setSecondRole()，而不是 getRole()、setRole()即可。
 ## [附录](#Index)
 <a id="FAQ"></a>
 ### [常见问题](#Index)
