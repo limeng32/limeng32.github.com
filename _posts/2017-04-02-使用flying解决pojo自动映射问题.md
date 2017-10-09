@@ -894,7 +894,7 @@ A：flying 的 sql 语句是动态生成的，只要您指定了正确的字段�
 
 <a id="AccountTableCreater"></a>
 ### [代码示例](#Index)
-为了您更方便的使用 flying 进行开发，我们提供了一个[覆盖了本文大部分功能的单数据源的代码示例](https://github.com/limeng32/flying-demo)。如果您是对跨数据源感兴趣，则您应该关注[这里](https://github.com/limeng32/flying-demo2)。
+为了您更方便的使用 flying 进行开发，我们提供了一个[覆盖了本文大部分功能的单数据源的代码示例](https://github.com/limeng32/flying-demo)。如果您是对跨数据源感兴趣，则您应该关注[这里](https://github.com/limeng32/flying-demo2)。（同时这个例示还使用了 mybatis 的二级缓存，关于此方面内容我们会在下一篇文章中详细进行介绍）
 ### [account 表建表语句](#Index)
 ```
 CREATE TABLE account (
