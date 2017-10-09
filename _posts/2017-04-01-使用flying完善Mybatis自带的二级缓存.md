@@ -8,10 +8,12 @@ category: blog
 ## 目录
 - [上手指南](#%E4%B8%8A%E6%89%8B%E6%8C%87%E5%8D%97)
 - [观察者 & 触发者](#%E8%A7%82%E5%AF%9F%E8%80%85--%E8%A7%A6%E5%8F%91%E8%80%85)
+- [<font color="red">跨数据源缓存</font>](#%E8%B7%A8%E6%95%B0%E6%8D%AE%E6%BA%90%E7%BC%93%E5%AD%98)
 - [注意事项](#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9)
   - [flying 如何判断缓存是否命中](#flying-%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E7%BC%93%E5%AD%98%E6%98%AF%E5%90%A6%E5%91%BD%E4%B8%AD)
   - [flying 已回滚的操作是否会生成缓存](#flying-%E5%B7%B2%E5%9B%9E%E6%BB%9A%E7%9A%84%E6%93%8D%E4%BD%9C%E6%98%AF%E5%90%A6%E4%BC%9A%E7%94%9F%E6%88%90%E7%BC%93%E5%AD%98)
 - [附录](#%E9%99%84%E5%BD%95)
+  - [<font color="red">代码示例</font>](#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B)
   - [account 表建表语句](#account-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
   - [role 表建表语句](#role-%E8%A1%A8%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5)
 
