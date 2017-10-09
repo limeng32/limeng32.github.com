@@ -336,7 +336,7 @@ private Role role;
 ```   
 <association property="role" javaType="Role" select="myPackage.RoleMapper.select" column="fk_role_id" /> 
 ```
-写出以上信息后，flying 在配置文件层面已经完全理解了数据结构。（此处除 association 之外还有另一种使用 typeHandler 的解决方案，具体可以参见 [跨数据源](#%E8%B7%A8%E6%95%B0%E6%8D%AE%E6%BA%90) 一节。）
+写出以上信息后，flying 在配置文件层面已经完全理解了数据结构。（此处除 association 之外还有另一种使用 typeHandler 的解决方案，稍后您可以在 [跨数据源](#%E8%B7%A8%E6%95%B0%E6%8D%AE%E6%BA%90) 一节中看到。）
 
 最后总结一下，完整版的 `account.xml` 如下：
 ``` 
