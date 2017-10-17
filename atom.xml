@@ -1267,7 +1267,7 @@ public interface RoleMapper {
   <entry>
     <title>flying的发展方向</title>
     <link href="http://flying-doc.limeng32.com/flying%E7%9A%84%E5%8F%91%E5%B1%95%E6%96%B9%E5%90%91"/>
-    <updated>2017-10-26T00:00:00+00:00</updated>
+    <updated>2017-10-16T00:00:00+00:00</updated>
     <id>http://flying-doc.limeng32.com/flying%E7%9A%84%E5%8F%91%E5%B1%95%E6%96%B9%E5%90%91</id>
     <content type="html">
       <p>目前 flying 最新版本为 <code class="highlighter-rouge">0.7.3 、 0.8.1 、 0.9.1</code>，此版本新增特性：</p>
