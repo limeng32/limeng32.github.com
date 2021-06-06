@@ -1,0 +1,457 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>flying 是什么 | my bat is flying in Aurora</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="limeng32">
+    
+
+    
+    <meta name="description" content="Mybatis 是一个简约而强大的 orm 解决方案，而 flying 是它的扩展插件。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flying 是什么">
+<meta property="og:url" content="http://flying-doc.limeng32.com/2017/06/01/2017-06-01-flying%20%E6%98%AF%E4%BB%80%E4%B9%88/index.html">
+<meta property="og:site_name" content="my bat is flying in Aurora">
+<meta property="og:description" content="Mybatis 是一个简约而强大的 orm 解决方案，而 flying 是它的扩展插件。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-05-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-05T13:29:23.775Z">
+<meta property="article:author" content="limeng32">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="my bat is flying in Aurora" type="application/atom+xml">
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/%02.css">
+<link rel="stylesheet" href="/.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="my bat is flying in Aurora">my bat is flying in Aurora</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:flying-doc.limeng32.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/06/01/2017-06-01-flying 是什么/" title="flying 是什么" itemprop="url">flying 是什么</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="limeng32" target="_blank" itemprop="author">limeng32</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-31T16:00:00.000Z" itemprop="datePublished"> 发表于 2017-06-01</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%80%E5%8F%91-flying"><span class="toc-text">为什么要开发 flying</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96-flying"><span class="toc-text">如何获取 flying</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-flying"><span class="toc-text">如何使用 flying</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B-flying-%E7%9A%84%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="toc-text">如何查看 flying 的源代码</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="为什么要开发-flying"><a href="#为什么要开发-flying" class="headerlink" title="为什么要开发 flying"></a><a href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%80%E5%8F%91-flying">为什么要开发 flying</a></h2><p>众所周知，Mybatis 在设计之初是作为一个工作于单线程之下的中间件而存在，虽然它易于上手，但放到互联网环境下使用时，初学者不可避免的要面对诸如“一级缓存存在脏数据”、“需要写大量明文 SQL 语句”等问题。这些是用户最关心的“是否可用”级别问题，也是 Mybatis-3 系列版本中开发团队并没有完全解决的问题，或者说，相对于另一个竞争产品 Hibernate，Mybatis 的开发团队选择了一种更谦逊的方式，他们开放 Mybatis 接口，允许用户开发插件，按自己的方式来解决这些问题。于是，一切 ORM 领域相关的问题在 Mybatis 上通过插件都有了解决方案。而本文所要介绍的 flying，则是集成了用户最需要的几个功能的插件组。与此同时 flying 提出了一种新的调用数据的方式，希望能对您起到抛砖引玉的作用。</p>
+<h2 id="如何获取-flying"><a href="#如何获取-flying" class="headerlink" title="如何获取 flying"></a><a href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96-flying">如何获取 flying</a></h2><p>目前 flying 已加入到 maven 中心库内，所以您只需在POM文件中加入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.limeng32<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis.flying<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.14<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>即可以使用。mybatis 版本与 flying 最新版本 的对应关系见下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">mybatis 版本</th>
+<th align="center">flying 最新版本</th>
+<th align="right">英文标题</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>3.4.x</code></td>
+<td align="center"><code>0.9.4 阳春</code></td>
+<td align="right"><code>sunny-spring</code></td>
+</tr>
+<tr>
+<td align="left"><code>3.4.x</code></td>
+<td align="center"><code>0.9.9 清明</code></td>
+<td align="right"><code>qing-ming</code></td>
+</tr>
+<tr>
+<td align="left"><code>3.4.x</code></td>
+<td align="center"><code>1.0.14 极光</code></td>
+<td align="right"><code>Aurora</code></td>
+</tr>
+</tbody></table>
+<p><code>极光</code> 是 flying 第一个正式版本，功能和性能均趋于稳定，如果您初次接触 flying，强烈建议您使用这个版本。</p>
+<p>如果您使用的是基于某一版本 mybatis 的定制版，您可以在依赖配置中加入 <code>exclusions</code>，以 mybatis-3.4.x 的定制版为例，您的依赖配置就像下面这样：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.limeng32<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis.flying<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.14<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mybatis<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在您做好以上配置之后，flying 会自动下载到您的电脑本地。</p>
+<h2 id="如何使用-flying"><a href="#如何使用-flying" class="headerlink" title="如何使用 flying"></a><a href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-flying">如何使用 flying</a></h2><p>使用本插件前您需要具备 Java 开发数据库应用的知识和使用 Mybatis 基本功能的经验。<br>在 Mybatis 中，有一个核心的配置文件，称做 Configuration.xml，我们的插件需要先在这里配置，才能在运行期被识别出来。</p>
+<p>在 Configuration.xml 中，首先为了让 Mybatis 在多线程环境下工作的更好，需要在 <code>settings</code> 中进行以下设置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;lazyLoadingEnabled&quot;</span> <span class="attr">value</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;aggressiveLazyLoading&quot;</span> <span class="attr">value</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;localCacheScope&quot;</span> <span class="attr">value</span>=<span class="string">&quot;SESSION&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;autoMappingBehavior&quot;</span> <span class="attr">value</span>=<span class="string">&quot;PARTIAL&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;lazyLoadTriggerMethods&quot;</span> <span class="attr">value</span>=<span class="string">&quot;&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">settings</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（以上配置中没有提到的内容用户可按照自己的实际情况进行配置）</p>
+<p>然后，在 Configuration.xml 的底部，我们加入 <code>plugins</code> 元素，将 flying 中的 Interceptor（拦截器）配置成 <code>plugin</code>，然后放到 <code>plugins</code> 中。目前 flying 有两个主要拦截器（负责处理 pojo 自动注射的 <code>AutoMapperInterceptor</code>），配置它们的方式如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">plugin</span> <span class="attr">interceptor</span>=<span class="string">&quot;indi.mybatis.flying.interceptors.AutoMapperInterceptor&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;dialect&quot;</span> <span class="attr">value</span>=<span class="string">&quot;mysql&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（以上配置中 <code>dialect</code> 标识了目标数据库为 mysql，更多的属性请参见讲解该插件的章节。）</p>
+<p>配置好以上内容之后，保存 Configuration.xml 文件，按正常方式启动 Mybatis，flying 即可生效。</p>
+<p>flying采用非侵占式工作机制，您既可以在以传统方式使用 mybatis 的项目中加入一部分以 flying 方式配置的方法，也可以在以 flying 方式配置的项目中加入一部分传统方式的方法，当然更好的选择是，完全使用 flying 方式替代传统的方式。</p>
+<h2 id="如何查看-flying-的源代码"><a href="#如何查看-flying-的源代码" class="headerlink" title="如何查看 flying 的源代码"></a><a href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B-flying-%E7%9A%84%E6%BA%90%E4%BB%A3%E7%A0%81">如何查看 flying 的源代码</a></h2><p>flying 的代码在 github 和 gitee 上进行开源，前者访问地址为 <a target="_blank" rel="noopener" href="https://github.com/limeng32/mybatis.flying">https://github.com/limeng32/mybatis.flying</a>，后者访问地址为<a target="_blank" rel="noopener" href="https://gitee.com/limeng32/mybatis.flying">https://gitee.com/limeng32/mybatis.flying</a> 您可以通过 Issues 与我们联系，提出您的需要，或是加入我们成为贡献者，提交您的代码，我们非常欢迎您这样做。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/blog/">blog</a>
+</div>
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://flying-doc.limeng32.com/2017/06/01/2017-06-01-flying%20%E6%98%AF%E4%BB%80%E4%B9%88/" data-title="flying 是什么 | my bat is flying in Aurora" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/05/01/2017-05-01-使用flying解决pojo自动映射问题/"  title="使用 flying 解决 pojo 自动映射问题">
+ <strong>下一篇：</strong><br/> 
+ <span>使用 flying 解决 pojo 自动映射问题
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%BC%80%E5%8F%91-flying"><span class="toc-text">为什么要开发 flying</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96-flying"><span class="toc-text">如何获取 flying</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-flying"><span class="toc-text">如何使用 flying</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B-flying-%E7%9A%84%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="toc-text">如何查看 flying 的源代码</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://my.oschina.net/u/2280950/blog/1580056" target="_blank" title="关于在网络应用中使用双向相关模型的研究">flying-初雪 理论基础一</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://my.oschina.net/u/2280950/blog/1594694" target="_blank" title="或逻辑的需求的实现方案">flying-初雪 理论基础二</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/dasn/articles/5208022.html" target="_blank" title="为什么我们在初雪版中引入自定义主键机制">flying-初雪 新增自定义主键生成器特性</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> God is in his heaven, all&#39;s right with the code. </p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://gitee.com/limeng32/mybatis.flying" target="_blank" class="icon-gitee" title="gitee"></a>
+		
+		
+		<a href="https://github.com/limeng32/mybatis.flying" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/li-meng-48" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		written by <a href="/about" target="_blank" title="limeng32">limeng32</a>
+		© 2021
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>

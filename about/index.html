@@ -1,0 +1,377 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>分类 : about | my bat is flying in Aurora</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="limeng32">
+    
+
+    
+    <meta name="description" content="我所作的一切，其实就是以 pojo 对象和数据库交互。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="开发 flying 的契机">
+<meta property="og:url" content="http://flying-doc.limeng32.com/about/index.html">
+<meta property="og:site_name" content="my bat is flying in Aurora">
+<meta property="og:description" content="我所作的一切，其实就是以 pojo 对象和数据库交互。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-04-02T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-05T13:26:06.013Z">
+<meta property="article:author" content="limeng32">
+<meta name="twitter:card" content="summary">
+
+    
+    <link rel="alternative" href="/atom.xml" title="my bat is flying in Aurora" type="application/atom+xml">
+    
+    
+    
+    
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="my bat is flying in Aurora">my bat is flying in Aurora</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:flying-doc.limeng32.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/about/index.html" title="开发 flying 的契机" itemprop="url">开发 flying 的契机</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="limeng32" target="_blank" itemprop="author">limeng32</a>
+		
+  <p class="article-time">
+    <time datetime="2017-04-02T16:00:00.000Z" itemprop="datePublished"> 发表于 2017-04-03</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%91%98%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="toc-text">程序员和数据库管理员的不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flying-%E5%8A%AA%E5%8A%9B%E5%81%9A%E7%9A%84%EF%BC%8C%E5%85%B6%E5%AE%9E%E5%B0%B1%E6%98%AF%E4%BB%A5-pojo-%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A4%E4%BA%92"><span class="toc-text">flying 努力做的，其实就是以 pojo 对象和数据库交互</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E7%90%86%E7%9A%84-orm-%E6%98%AF%E5%9B%A2%E9%98%9F%E6%88%90%E9%95%BF%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5"><span class="toc-text">合理的 orm 是团队成长的第一步</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="程序员和数据库管理员的不同"><a href="#程序员和数据库管理员的不同" class="headerlink" title="程序员和数据库管理员的不同"></a><a href="#%E7%A8%8B%E5%BA%8F%E5%91%98%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84%E4%B8%8D%E5%90%8C">程序员和数据库管理员的不同</a></h2><p>为什么应用开发程序员和数据库管理员的思考方式大多时候不一样？为什么同一个需求 programmer 和 dba 会有不同的解决方法？实际上并非因为同行相轻，而是这两种人使用的工具体系不同：程序员使用的是计算机专家设计的语言，而数据库管理员使用的是数学家设计的语言，看，问题就在这里。</p>
+<p>所以程序员会觉得和数据库打交道的代码很 <b>dirty</b>，很多开发了好几年数据库的人会觉得自己没学到啥，日复一日的再写一成不变的 sql。而 dba 们的怨言更多：“真有必要声明那么多对象类型？还有比 json 更好的格式？你们的 sql 基础为什么这么差？……”</p>
+<p>然后，flying-初雪 即将到来。</p>
+<h2 id="flying-努力做的，其实就是以-pojo-对象和数据库交互"><a href="#flying-努力做的，其实就是以-pojo-对象和数据库交互" class="headerlink" title="flying 努力做的，其实就是以 pojo 对象和数据库交互"></a><a href="#flying-%E5%8A%AA%E5%8A%9B%E5%81%9A%E7%9A%84%EF%BC%8C%E5%85%B6%E5%AE%9E%E5%B0%B1%E6%98%AF%E4%BB%A5-pojo-%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A4%E4%BA%92">flying 努力做的，其实就是以 pojo 对象和数据库交互</a></h2><p>flying 的本质，就是想把每一次与数据库交互都变为一次对象交互，而不是一次字符串交互。对象相对于字符串的好处不言而喻。</p>
+<p>首先，计算机理解对象比字符串容易得多。比如我有一个子容器向父容器发送查询请求，然后按照业务，父容器要在这个查询请求上修改一个条件再追加一个条件。使用查询对象可以轻松做到这一点，因为它能被完全解析；但解析字符串就很麻烦了（试想一下拆分一个充满了 and 和 or 的 sql），估计只有数据库厂商才能提供可靠的工具。</p>
+<p>其次，不同数据库的 sql 语法有区别，但它们的查询对象相同。</p>
+<p>最后，查询对象可以跨语言甚至跨格式（JSON、XML），在传输和保存时可以压缩，这都是字符串所不具备的。</p>
+<p>以上这些特性有的 flying 已经实现，有的正在实现，但它们最终都会实现。</p>
+<h2 id="合理的-orm-是团队成长的第一步"><a href="#合理的-orm-是团队成长的第一步" class="headerlink" title="合理的 orm 是团队成长的第一步"></a><a href="#%E5%90%88%E7%90%86%E7%9A%84-orm-%E6%98%AF%E5%9B%A2%E9%98%9F%E6%88%90%E9%95%BF%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5">合理的 orm 是团队成长的第一步</a></h2><p>互联网团队的成长实际上是信息处理能力的成长。第一步的瓶颈是存储层面，第二步的瓶颈是路由层面，第三步……别想太多。总之一个团队告别了冗长的 sql 语句后，它自然会达到一个新的层次。</p>
+<p>乱语一番，请君见笑。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://flying-doc.limeng32.com/about/index.html" data-title="开发 flying 的契机 | my bat is flying in Aurora" data-tsina="" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+	
+
+
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E5%91%98%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E7%AE%A1%E7%90%86%E5%91%98%E7%9A%84%E4%B8%8D%E5%90%8C"><span class="toc-text">程序员和数据库管理员的不同</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#flying-%E5%8A%AA%E5%8A%9B%E5%81%9A%E7%9A%84%EF%BC%8C%E5%85%B6%E5%AE%9E%E5%B0%B1%E6%98%AF%E4%BB%A5-pojo-%E5%AF%B9%E8%B1%A1%E5%92%8C%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BA%A4%E4%BA%92"><span class="toc-text">flying 努力做的，其实就是以 pojo 对象和数据库交互</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%88%E7%90%86%E7%9A%84-orm-%E6%98%AF%E5%9B%A2%E9%98%9F%E6%88%90%E9%95%BF%E7%9A%84%E7%AC%AC%E4%B8%80%E6%AD%A5"><span class="toc-text">合理的 orm 是团队成长的第一步</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://my.oschina.net/u/2280950/blog/1580056" target="_blank" title="关于在网络应用中使用双向相关模型的研究">flying-初雪 理论基础一</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="https://my.oschina.net/u/2280950/blog/1594694" target="_blank" title="或逻辑的需求的实现方案">flying-初雪 理论基础二</a>
+            
+          </li>
+        
+          <li>
+            
+            	<a href="http://www.cnblogs.com/dasn/articles/5208022.html" target="_blank" title="为什么我们在初雪版中引入自定义主键机制">flying-初雪 新增自定义主键生成器特性</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> God is in his heaven, all&#39;s right with the code. </p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		
+		<a href="https://gitee.com/limeng32/mybatis.flying" target="_blank" class="icon-gitee" title="gitee"></a>
+		
+		
+		<a href="https://github.com/limeng32/mybatis.flying" target="_blank" class="icon-github" title="github"></a>
+		
+		
+		
+		
+		
+		
+		
+		<a href="http://www.zhihu.com/people/li-meng-48" target="_blank" class="icon-zhihu" title="知乎"></a>
+		
+		
+		
+	</div>
+			
+		
+
+	<p class="copyright">
+		written by <a href="/about" target="_blank" title="limeng32">limeng32</a>
+		© 2021
+	</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
